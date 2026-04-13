@@ -1,0 +1,100 @@
+<?php require_once BASE_PATH . '/app/Views/partials/header.php'; ?>
+
+<section class="page-header">
+    <div class="container">
+        <h1 class="page-title">Projets</h1>
+        <p class="page-subtitle">Découvrez mes réalisations et projets récents</p>
+    </div>
+</section>
+
+<section class="section projects-section">
+    <div class="container">
+        <?php if (empty($projects)): ?>
+        <p class="no-content">Aucun projet pour le moment.</p>
+        <?php else: ?>
+        
+        <div class="projects-grid">
+            <?php foreach ($projects as $project): ?>
+            <article class="project-card" onclick="openProjectModal(<?= $project['id'] ?>)">
+                <div class="project-card-image">
+                    <img src="<?= ASSETS_PATH ?>/images/projects/<?= htmlspecialchars($project['image']) ?>" 
+                         alt="<?= htmlspecialchars($project['title']) ?>"
+                         onerror="this.src='https://via.placeholder.com/600x400/1a1a2e/eee?text=<?= urlencode($project['title']) ?>'">
+                    <div class="project-card-overlay">
+                        <i class="fas fa-expand"></i>
+                    </div>
+                </div>
+                <div class="project-card-content">
+                    <h3 class="project-card-title"><?= htmlspecialchars($project['title']) ?></h3>
+                    <p class="project-card-description"><?= htmlspecialchars($project['description']) ?></p>
+                    
+                    <?php if ($project['technologies']): ?>
+                    <div class="project-card-tags">
+                        <?php foreach (explode(',', $project['technologies']) as $tech): ?>
+                        <span class="tag"><?= htmlspecialchars(trim($tech)) ?></span>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </article>
+            <?php endforeach; ?>
+        </div>
+        
+        <?php endif; ?>
+    </div>
+</section>
+
+<!-- Project Modal -->
+<div id="projectModal" class="project-modal">
+    <div class="project-modal-content">
+        <button class="modal-close" onclick="closeProjectModal()">
+            <i class="fas fa-times"></i>
+        </button>
+        
+        <div class="modal-gallery">
+            <div class="gallery-main">
+                <button class="gallery-nav gallery-prev" onclick="prevImage()">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <img id="modalMainImage" src="" alt="">
+                <button class="gallery-nav gallery-next" onclick="nextImage()">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <div class="gallery-thumbnails" id="galleryThumbnails"></div>
+        </div>
+        
+        <div class="modal-details">
+            <h2 id="modalTitle"></h2>
+            <p id="modalDescription"></p>
+            
+            <div id="modalTechnologies" class="modal-technologies"></div>
+            
+            <div id="modalCompetenceBlocks" class="modal-competence-blocks"></div>
+            
+            <div id="modalLinks" class="modal-links"></div>
+        </div>
+    </div>
+</div>
+
+<?php require_once BASE_PATH . '/app/Views/partials/footer.php'; ?>
+
+<!-- Project Data for JavaScript (must be after app.js is loaded) -->
+<script>
+window.projectsData = {
+    <?php foreach ($projects as $project): ?>
+    <?= $project['id'] ?>: {
+        id: <?= $project['id'] ?>,
+        title: <?= json_encode($project['title']) ?>,
+        description: <?= json_encode($project['long_description'] ?: $project['description']) ?>,
+        image: <?= json_encode($project['image']) ?>,
+        images: <?= json_encode(!empty($project['gallery_images']) ? array_map('trim', explode(',', $project['gallery_images'])) : [$project['image']]) ?>,
+        technologies: <?= json_encode($project['technologies'] ? array_map('trim', explode(',', $project['technologies'])) : []) ?>,
+        url: <?= json_encode($project['url']) ?>,
+        github_url: <?= json_encode($project['github_url']) ?>,
+        slug: <?= json_encode($project['slug']) ?>,
+        competence_blocks: <?= json_encode($project['competence_blocks'] ?? []) ?>
+    },
+    <?php endforeach; ?>
+};
+</script>
