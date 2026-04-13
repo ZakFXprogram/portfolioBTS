@@ -5,7 +5,9 @@
  * cf discord pour les identifiants de connexion
  */
 
-define('BASE_PATH', __DIR__);
+if (!defined('BASE_PATH')) {
+    define('BASE_PATH', __DIR__);
+}
 require_once BASE_PATH . '/config/config.php';
 require_once BASE_PATH . '/config/admin.php';
 require_once BASE_PATH . '/app/Core/Database.php';
