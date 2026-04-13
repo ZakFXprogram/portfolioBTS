@@ -33,6 +33,12 @@ class App
         ];
 
         $path = implode('/', $url);
+
+        // Route spéciale pour /admin → charger admin.php directement
+        if ($path === 'admin') {
+            require_once BASE_PATH . '/admin.php';
+            return;
+        }
         
         if (isset($routes[$path])) {
             $this->controller = $routes[$path][0];
