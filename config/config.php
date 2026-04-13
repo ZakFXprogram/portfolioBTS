@@ -12,7 +12,16 @@ define('DB_PATH', BASE_PATH . '/database/portfolio.db');
 
 // Configuration du site
 define('SITE_NAME', 'Mon Portfolio');
-define('SITE_URL', 'http://localhost:8000');
+
+// Détecter SITE_URL dynamiquement (fonctionne en local et en production)
+$_protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'
+    || !empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https'
+    || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443))
+    ? 'https' : 'http';
+$_host = $_SERVER['HTTP_HOST'] ?? 'localhost:8000';
+define('SITE_URL', $_protocol . '://' . $_host);
+unset($_protocol, $_host);
+
 define('SITE_AUTHOR', 'Votre Nom');
 define('SITE_DESCRIPTION', 'Senior Full-Stack Developer');
 
