@@ -57,9 +57,18 @@ class App
 
     protected function parseUrl()
     {
-        if (isset($_GET['url'])) {
+        if (isset($_GET['url']) && $_GET['url'] !== '') {
             return explode('/', filter_var(rtrim($_GET['url'], '/'), FILTER_SANITIZE_URL));
         }
-        return [];
+
+        // Fallback : parser REQUEST_URI directement (Nginx, Railway, etc.)
+        $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+        $uri = trim($uri, '/');
+
+        if ($uri === '') {
+            return [];
+        }
+
+        return explode('/', filter_var($uri, FILTER_SANITIZE_URL));
     }
 }
