@@ -51,36 +51,31 @@
             <?php endif; ?>
             
             <?php if (!empty($project['competence_blocks'])): ?>
-            <div class="project-detail-competences">
-                <h3>Compétences mobilisées</h3>
-                <div class="competence-blocks-list">
-                    <?php foreach ($project['competence_blocks'] as $block): ?>
-                    <span class="competence-block-badge" style="--block-color: <?= htmlspecialchars($block['color'] ?? '#f97316') ?>">
-                        <?php if ($block['icon']): ?><i class="<?= htmlspecialchars($block['icon']) ?>"></i><?php endif; ?>
-                        <?= htmlspecialchars($block['name']) ?>
-                    </span>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-            <?php endif; ?>
-            
-            <?php if (!empty($project['sub_competences'])): ?>
             <div class="project-detail-sub-competences">
-                <h3>Détail des compétences</h3>
+                <h3>Compétences mobilisées</h3>
                 <?php 
+                // Grouper les sous-compétences par block_id
                 $groupedSc = [];
                 foreach ($project['sub_competences'] as $sc) {
-                    $groupedSc[$sc['block_name'] ?? 'Autre'][] = $sc;
+                    $groupedSc[$sc['block_id']][] = $sc;
                 }
-                foreach ($groupedSc as $blockName => $scs): ?>
+                // Afficher par bloc avec justification par sous-compétence
+                foreach ($project['competence_blocks'] as $block): 
+                    $blockScs = $groupedSc[$block['id']] ?? [];
+                    if (empty($blockScs)) continue;
+                ?>
                 <div class="sc-group">
-                    <h4 class="sc-group-title"><?= htmlspecialchars($blockName) ?></h4>
-                    <?php foreach ($scs as $sc): ?>
-                    <div class="sc-item">
-                        <strong class="sc-item-name"><?= htmlspecialchars($sc['sc_name']) ?></strong>
-                        <p class="sc-item-justification"><?= nl2br(htmlspecialchars($sc['justification'])) ?></p>
-                    </div>
-                    <?php endforeach; ?>
+                    <h4 class="sc-group-title"><?= htmlspecialchars($block['name']) ?></h4>
+                    <ul class="sc-items-list">
+                        <?php foreach ($blockScs as $sc): ?>
+                        <li class="sc-item-entry">
+                            <span class="sc-item-name"><?= htmlspecialchars($sc['sc_name']) ?></span>
+                            <?php if (!empty($sc['sc_justification'])): ?>
+                            <p class="sc-item-justification"><?= nl2br(htmlspecialchars($sc['sc_justification'])) ?></p>
+                            <?php endif; ?>
+                        </li>
+                        <?php endforeach; ?>
+                    </ul>
                 </div>
                 <?php endforeach; ?>
             </div>

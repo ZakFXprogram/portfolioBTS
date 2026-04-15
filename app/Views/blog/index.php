@@ -19,10 +19,10 @@
                 </div>
             </div>
             <div class="veille-badges">
-                <span class="veille-badge"><i class="fas fa-shield-alt"></i> Sécurité API</span>
-                <span class="veille-badge"><i class="fas fa-lock"></i> Auth & JWT</span>
-                <span class="veille-badge"><i class="fas fa-bug"></i> XSS/CSRF/SQLi</span>
-                <span class="veille-badge"><i class="fas fa-user-shield"></i> RGPD</span>
+                <span class="veille-badge"><i class="fas fa-server"></i> Mainframe</span>
+                <span class="veille-badge"><i class="fas fa-code"></i> COBOL</span>
+                <span class="veille-badge"><i class="fas fa-sync-alt"></i> Modernisation</span>
+                <span class="veille-badge"><i class="fas fa-cloud"></i> Cloud & Z/OS</span>
             </div>
         </div>
 
@@ -61,7 +61,7 @@
 
         <div class="veille-info">
             <i class="fas fa-info-circle"></i>
-            <p>Cette veille est alimentée automatiquement par des flux RSS de sources reconnues : CERT-FR (ANSSI), OWASP, The Hacker News, Krebs on Security, et d'autres experts en cybersécurité.</p>
+            <p>Cette veille est alimentée automatiquement par des flux RSS de sources reconnues : IBM Z Blog, Planet Mainframe et IBM Developer.</p>
         </div>
     </div>
 </section>

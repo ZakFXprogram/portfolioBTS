@@ -102,26 +102,7 @@
 </div>
 <?php endif; ?>
 
-<!-- Skills Section -->
-<?php if (!empty($skills)): ?>
-<section class="section skills-section">
-    <div class="container">
-        <h2 class="section-title">Compétences</h2>
-        
-        <div class="skills-grid">
-            <?php foreach ($skills as $skill): ?>
-            <div class="skill-item">
-                <i class="<?= htmlspecialchars($skill['icon']) ?>"></i>
-                <span class="skill-name"><?= htmlspecialchars($skill['name']) ?></span>
-                <div class="skill-bar">
-                    <div class="skill-progress" style="width: <?= (int)$skill['level'] ?>%"></div>
-                </div>
-            </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
-<?php endif; ?>
+
 
 <?php require_once BASE_PATH . '/app/Views/partials/footer.php'; ?>
 

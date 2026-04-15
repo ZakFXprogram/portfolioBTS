@@ -226,25 +226,25 @@ class Database
             )
         ");
 
-        // Table pivot : projet <-> grande compétence
+        // Table pivot : projet <-> grande compétence + justification par bloc
         $this->pdo->exec("
             CREATE TABLE IF NOT EXISTS project_competence_blocks (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 project_id INTEGER NOT NULL,
                 competence_block_id INTEGER NOT NULL,
+                justification TEXT DEFAULT '',
                 FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
                 FOREIGN KEY (competence_block_id) REFERENCES competence_blocks(id) ON DELETE CASCADE,
                 UNIQUE(project_id, competence_block_id)
             )
         ");
 
-        // Table pivot : projet <-> sous-compétence + justification
+        // Table pivot : projet <-> sous-compétence
         $this->pdo->exec("
             CREATE TABLE IF NOT EXISTS project_sub_competences (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 project_id INTEGER NOT NULL,
                 sub_competence_id INTEGER NOT NULL,
-                justification TEXT NOT NULL,
                 FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
                 FOREIGN KEY (sub_competence_id) REFERENCES sub_competences(id) ON DELETE CASCADE,
                 UNIQUE(project_id, sub_competence_id)

@@ -39,17 +39,17 @@ class ProjectController extends Controller
             return;
         }
 
-        // Charger les grandes compétences du projet
+        // Charger les grandes compétences du projet avec justification
         $project['competence_blocks'] = $this->db->fetchAll(
-            "SELECT cb.* FROM competence_blocks cb 
+            "SELECT cb.*, pcb.justification FROM competence_blocks cb 
              JOIN project_competence_blocks pcb ON cb.id = pcb.competence_block_id 
              WHERE pcb.project_id = ? ORDER BY cb.order_index", 
             [$project['id']]
         );
 
-        // Charger les sous-compétences avec justification, regroupées par bloc
+        // Charger les sous-compétences cochées avec justification, regroupées par bloc
         $project['sub_competences'] = $this->db->fetchAll(
-            "SELECT psc.justification, sc.name as sc_name, cb.id as block_id, cb.name as block_name, cb.color as block_color
+            "SELECT sc.name as sc_name, psc.justification as sc_justification, cb.id as block_id, cb.name as block_name, cb.color as block_color
              FROM project_sub_competences psc
              JOIN sub_competences sc ON psc.sub_competence_id = sc.id
              LEFT JOIN competence_blocks cb ON sc.competence_block_id = cb.id

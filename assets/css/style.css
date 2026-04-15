@@ -828,6 +828,7 @@ ul, ol {
     text-align: right;
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: var(--spacing-xs);
 }
 
@@ -858,6 +859,76 @@ ul, ol {
 
 .experience-responsibilities li {
     margin-bottom: var(--spacing-sm);
+}
+
+/* Bouton compétences expérience */
+.btn-competences-exp {
+    margin-top: var(--spacing-md);
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #f97316, #fb923c);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+.btn-competences-exp:hover {
+    background: linear-gradient(135deg, #c2410c, #ea580c);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(249,115,22,0.4);
+}
+
+/* Modal compétences expérience */
+.exp-comp-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+.exp-comp-modal.active {
+    display: flex;
+}
+.exp-comp-modal-content {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    max-width: 700px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+.exp-comp-modal-close {
+    position: absolute;
+    top: 15px; right: 20px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.8rem;
+    cursor: pointer;
+    line-height: 1;
+}
+.exp-comp-modal-close:hover {
+    color: #ef4444;
+}
+.exp-comp-modal-title {
+    color: var(--accent-primary);
+    font-size: 1.2rem;
+    margin-bottom: var(--spacing-lg);
+    padding-right: 30px;
+}
+.exp-comp-modal-body .sc-group {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
 }
 
 /* Skills Categories */
@@ -1985,7 +2056,7 @@ ul, ol {
     align-items: center;
     gap: var(--spacing-sm);
     padding: 8px 18px;
-    background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+    background: linear-gradient(135deg, #f97316, #fb923c);
     color: #fff;
     border-radius: var(--radius-md);
     text-decoration: none;
@@ -1996,7 +2067,9 @@ ul, ol {
 
 .btn-voir-competences:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
+    background: linear-gradient(135deg, #fff, #fed7aa);
+    color: #f97316;
 }
 
 /* Page projet — section compétences */
@@ -2041,15 +2114,39 @@ ul, ol {
     margin-bottom: var(--spacing-md);
 }
 
+.sc-items-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--spacing-md) 0;
+}
+
+.sc-items-list li {
+    color: var(--text-primary);
+    padding: var(--spacing-sm) 0;
+    padding-left: var(--spacing-md);
+    position: relative;
+    font-size: 0.95rem;
+}
+
+.sc-items-list li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    top: var(--spacing-sm);
+    color: var(--accent-primary);
+}
+
 .sc-item-name {
     display: block;
     color: var(--text-primary);
     font-size: 1rem;
-    margin-bottom: var(--spacing-sm);
+    font-weight: 600;
+    margin-bottom: 2px;
 }
 
 .sc-item-justification {
     color: var(--text-secondary);
     font-size: 0.9rem;
     line-height: 1.6;
+    margin: 4px 0 0 0;
 }

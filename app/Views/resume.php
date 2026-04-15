@@ -59,6 +59,12 @@
                         <?php endif; ?>
                     </div>
                     <?php endif; ?>
+                    
+                    <?php if (!empty($exp['competence_blocks'])): ?>
+                    <button type="button" class="btn btn-competences-exp" onclick="openExpCompetences(<?= $exp['id'] ?>)">
+                        <i class="fas fa-graduation-cap"></i> Voir les compétences
+                    </button>
+                    <?php endif; ?>
                 </article>
                 <?php endforeach; ?>
             </div>
@@ -88,5 +94,80 @@
         <?php endif; ?>
     </div>
 </section>
+
+<!-- Modal Compétences Expérience -->
+<div id="expCompetencesModal" class="exp-comp-modal">
+    <div class="exp-comp-modal-content">
+        <button class="exp-comp-modal-close" onclick="closeExpCompetences()">&times;</button>
+        <h3 id="expCompTitle" class="exp-comp-modal-title"></h3>
+        <div id="expCompBody" class="exp-comp-modal-body"></div>
+    </div>
+</div>
+
+<script>
+var expCompetencesData = <?php
+    $expData = [];
+    foreach ($experiences as $exp) {
+        if (empty($exp['competence_blocks'])) continue;
+        $grouped = [];
+        foreach ($exp['sub_competences'] as $sc) {
+            $grouped[$sc['block_id']][] = $sc;
+        }
+        $expData[$exp['id']] = [
+            'title' => $exp['company'] . ' — ' . $exp['position'],
+            'blocks' => $exp['competence_blocks'],
+            'grouped' => $grouped
+        ];
+    }
+    echo json_encode($expData);
+?>;
+
+function openExpCompetences(expId) {
+    var data = expCompetencesData[expId];
+    if (!data) return;
+    
+    document.getElementById('expCompTitle').textContent = data.title;
+    var body = document.getElementById('expCompBody');
+    var html = '';
+    
+    data.blocks.forEach(function(block) {
+        html += '<div class="sc-group">';
+        html += '<h4 class="sc-group-title">' + escapeHtml(block.name) + '</h4>';
+        var scs = data.grouped[block.id] || [];
+        if (scs.length > 0) {
+            html += '<ul class="sc-items-list">';
+            scs.forEach(function(sc) {
+                html += '<li class="sc-item-entry"><span class="sc-item-name">' + escapeHtml(sc.sc_name) + '</span>';
+                if (sc.sc_justification) {
+                    html += '<p class="sc-item-justification">' + escapeHtml(sc.sc_justification).replace(/\n/g, '<br>') + '</p>';
+                }
+                html += '</li>';
+            });
+            html += '</ul>';
+        }
+        html += '</div>';
+    });
+    
+    body.innerHTML = html;
+    document.getElementById('expCompetencesModal').classList.add('active');
+}
+
+function closeExpCompetences() {
+    document.getElementById('expCompetencesModal').classList.remove('active');
+}
+
+function escapeHtml(text) {
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+document.getElementById('expCompetencesModal').addEventListener('click', function(e) {
+    if (e.target === this) closeExpCompetences();
+});
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeExpCompetences();
+});
+</script>
 
 <?php require_once BASE_PATH . '/app/Views/partials/footer.php'; ?>

@@ -189,6 +189,33 @@ $db = Database::getInstance();
 $message = '';
 $messageType = '';
 
+// Migration auto : ajouter colonne justification à project_sub_competences si absente
+try {
+    $cols = $db->fetchAll("PRAGMA table_info(project_sub_competences)");
+    $hasJust = false;
+    foreach ($cols as $c) {
+        if ($c['name'] === 'justification') { $hasJust = true; break; }
+    }
+    if (!$hasJust) {
+        $db->query("ALTER TABLE project_sub_competences ADD COLUMN justification TEXT DEFAULT ''");
+    }
+} catch (Exception $e) {}
+
+// Migration auto : tables compétences expérience
+try {
+    $db->query("CREATE TABLE IF NOT EXISTS experience_competence_blocks (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        experience_id INTEGER NOT NULL,
+        competence_block_id INTEGER NOT NULL
+    )");
+    $db->query("CREATE TABLE IF NOT EXISTS experience_sub_competences (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        experience_id INTEGER NOT NULL,
+        sub_competence_id INTEGER NOT NULL,
+        justification TEXT DEFAULT ''
+    )");
+} catch (Exception $e) {}
+
 // Traitement des formulaires
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
@@ -516,54 +543,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // ====== COMPÉTENCES PROJET ======
-    if ($action === 'save_project_competence_blocks') {
+    if ($action === 'save_project_competences') {
         $project_id = (int)($_POST['project_id'] ?? 0);
         $block_ids = $_POST['competence_block_ids'] ?? [];
-        $db->query("DELETE FROM project_competence_blocks WHERE project_id = ?", [$project_id]);
-        foreach ($block_ids as $block_id) {
-            $db->query("INSERT INTO project_competence_blocks (project_id, competence_block_id) VALUES (?, ?)", [$project_id, (int)$block_id]);
-        }
-        $message = "Grandes compétences du projet mises à jour !";
-        $messageType = 'success';
-    }
+        $sub_competence_ids = $_POST['sub_competence_ids'] ?? [];
+        $sc_justifications = $_POST['sc_justifications'] ?? [];
 
-    if ($action === 'add_project_sub_competence') {
-        $project_id = (int)($_POST['project_id'] ?? 0);
-        $sub_competence_id = (int)($_POST['sub_competence_id'] ?? 0);
-        $justification = trim($_POST['justification'] ?? '');
-        if (empty($justification)) {
-            $message = "La justification est obligatoire !";
-            $messageType = 'error';
-        } else {
-            try {
-                $db->query("INSERT INTO project_sub_competences (project_id, sub_competence_id, justification) VALUES (?, ?, ?)", [$project_id, $sub_competence_id, $justification]);
-                $message = "Sous-compétence ajoutée au projet !";
-                $messageType = 'success';
-            } catch (Exception $e) {
-                $message = "Erreur: " . $e->getMessage();
-                $messageType = 'error';
+        // Vérifier que chaque sous-compétence cochée a une justification
+        $valid = true;
+        foreach ($sub_competence_ids as $sc_id) {
+            $just = trim($sc_justifications[(int)$sc_id] ?? '');
+            if ($just === '') {
+                $valid = false;
+                break;
             }
         }
-    }
 
-    if ($action === 'edit_project_sub_competence') {
-        $id = (int)($_POST['psc_id'] ?? 0);
-        $justification = trim($_POST['justification'] ?? '');
-        if (empty($justification)) {
-            $message = "La justification est obligatoire !";
+        if (!$valid) {
+            $message = "Chaque sous-compétence cochée doit avoir une justification !";
             $messageType = 'error';
         } else {
-            $db->query("UPDATE project_sub_competences SET justification = ? WHERE id = ?", [$justification, $id]);
-            $message = "Justification modifiée !";
+            // Sauvegarder les blocs (sans justification par bloc)
+            $db->query("DELETE FROM project_competence_blocks WHERE project_id = ?", [$project_id]);
+            foreach ($block_ids as $block_id) {
+                $bid = (int)$block_id;
+                $db->query("INSERT INTO project_competence_blocks (project_id, competence_block_id, justification) VALUES (?, ?, ?)", [$project_id, $bid, '']);
+            }
+
+            // Sauvegarder les sous-compétences cochées avec justification
+            $db->query("DELETE FROM project_sub_competences WHERE project_id = ?", [$project_id]);
+            foreach ($sub_competence_ids as $sc_id) {
+                $sid = (int)$sc_id;
+                $just = trim($sc_justifications[$sid] ?? '');
+                $db->query("INSERT INTO project_sub_competences (project_id, sub_competence_id, justification) VALUES (?, ?, ?)", [$project_id, $sid, $just]);
+            }
+
+            $message = "Compétences du projet mises à jour !";
             $messageType = 'success';
         }
     }
 
-    if ($action === 'delete_project_sub_competence') {
-        $id = (int)($_POST['psc_id'] ?? 0);
-        $db->query("DELETE FROM project_sub_competences WHERE id = ?", [$id]);
-        $message = "Sous-compétence retirée du projet !";
-        $messageType = 'success';
+    // ====== COMPÉTENCES EXPÉRIENCE ======
+    if ($action === 'save_experience_competences') {
+        $experience_id = (int)($_POST['experience_id'] ?? 0);
+        $block_ids = $_POST['competence_block_ids'] ?? [];
+        $sub_competence_ids = $_POST['sub_competence_ids'] ?? [];
+        $sc_justifications = $_POST['sc_justifications'] ?? [];
+
+        $valid = true;
+        foreach ($sub_competence_ids as $sc_id) {
+            $just = trim($sc_justifications[(int)$sc_id] ?? '');
+            if ($just === '') { $valid = false; break; }
+        }
+
+        if (!$valid) {
+            $message = "Chaque sous-compétence cochée doit avoir une justification !";
+            $messageType = 'error';
+        } else {
+            $db->query("DELETE FROM experience_competence_blocks WHERE experience_id = ?", [$experience_id]);
+            foreach ($block_ids as $block_id) {
+                $db->query("INSERT INTO experience_competence_blocks (experience_id, competence_block_id) VALUES (?, ?)", [$experience_id, (int)$block_id]);
+            }
+
+            $db->query("DELETE FROM experience_sub_competences WHERE experience_id = ?", [$experience_id]);
+            foreach ($sub_competence_ids as $sc_id) {
+                $sid = (int)$sc_id;
+                $just = trim($sc_justifications[$sid] ?? '');
+                $db->query("INSERT INTO experience_sub_competences (experience_id, sub_competence_id, justification) VALUES (?, ?, ?)", [$experience_id, $sid, $just]);
+            }
+
+            $message = "Compétences de l'expérience mises à jour !";
+            $messageType = 'success';
+        }
     }
 }
 
@@ -919,6 +970,9 @@ $subCompetences = $db->fetchAll("SELECT sc.*, cb.name as block_name FROM sub_com
                             </small>
                         </div>
                         <div style="display: flex; gap: 8px;">
+                            <button type="button" class="btn-edit" onclick="openExpCompetencesAdmin(<?= $exp['id'] ?>, '<?= htmlspecialchars(addslashes($exp['company'] . ' — ' . $exp['position']), ENT_QUOTES) ?>')" title="Compétences">
+                                <i class="fas fa-graduation-cap"></i>
+                            </button>
                             <button type="button" class="btn-edit" onclick="editExperience(<?= htmlspecialchars(json_encode($exp)) ?>)">
                                 <i class="fas fa-edit"></i>
                             </button>
@@ -1617,105 +1671,143 @@ $subCompetences = $db->fetchAll("SELECT sc.*, cb.name as block_name FROM sub_com
                 <button type="button" class="modal-close" onclick="closeProjectCompetencesModal()">&times;</button>
             </div>
             
-            <!-- Partie 1 : Grandes compétences -->
-            <h4 style="color:#fb923c;margin-bottom:10px;">1. Grandes compétences mobilisées</h4>
-            <form method="POST" style="margin-bottom:25px;">
-                <input type="hidden" name="action" value="save_project_competence_blocks">
+            <form method="POST" id="pcForm">
+                <input type="hidden" name="action" value="save_project_competences">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                <input type="hidden" name="project_id" id="pc_blocks_project_id">
+                <input type="hidden" name="project_id" id="pc_project_id">
                 
-                <div id="pc_blocks_checkboxes" style="display:flex;flex-direction:column;gap:10px;margin-bottom:15px;">
-                    <?php foreach ($competenceBlocks as $block): ?>
-                    <div class="checkbox-group">
-                        <input type="checkbox" name="competence_block_ids[]" value="<?= $block['id'] ?>" id="pc_block_<?= $block['id'] ?>" class="pc-block-checkbox">
-                        <label for="pc_block_<?= $block['id'] ?>" style="color:#fff;">
-                            <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:<?= htmlspecialchars($block['color'] ?? '#f97316') ?>;margin-right:5px;"></span>
+                <?php foreach ($competenceBlocks as $block): ?>
+                <div class="pc-block-section" data-block-id="<?= $block['id'] ?>" style="margin-bottom:20px;padding:15px;border:1px solid #2a2a3e;border-radius:8px;">
+                    <div class="checkbox-group" style="margin-bottom:10px;">
+                        <input type="checkbox" name="competence_block_ids[]" value="<?= $block['id'] ?>" id="pc_block_<?= $block['id'] ?>" class="pc-block-checkbox" onchange="toggleBlockDetail(<?= $block['id'] ?>)">
+                        <label for="pc_block_<?= $block['id'] ?>" style="color:#fff;font-weight:600;font-size:1.05rem;">
+                            <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:<?= htmlspecialchars($block['color'] ?? '#f97316') ?>;margin-right:8px;"></span>
                             <?= htmlspecialchars($block['name']) ?>
                         </label>
                     </div>
-                    <?php endforeach; ?>
+                    
+                    <div class="pc-block-detail" id="pc_block_detail_<?= $block['id'] ?>" style="display:none;margin-left:25px;margin-top:10px;">
+                        <!-- Sous-compétences en checkboxes avec justification individuelle -->
+                        <label style="color:#fb923c;font-size:0.9rem;margin-bottom:8px;display:block;">Sous-compétences :</label>
+                        <?php 
+                        $blockSubs = array_filter($subCompetences, function($sc) use ($block) { 
+                            return $sc['competence_block_id'] == $block['id']; 
+                        });
+                        foreach ($blockSubs as $sc): ?>
+                        <div class="pc-sc-item" style="margin-bottom:10px;padding:8px;border:1px solid #1a1a2e;border-radius:6px;">
+                            <div class="checkbox-group" style="margin-bottom:4px;">
+                                <input type="checkbox" name="sub_competence_ids[]" value="<?= $sc['id'] ?>" id="pc_sc_<?= $sc['id'] ?>" class="pc-sc-checkbox" data-block-id="<?= $block['id'] ?>" onchange="toggleScJustification(<?= $sc['id'] ?>)">
+                                <label for="pc_sc_<?= $sc['id'] ?>" style="color:#ccc;font-size:0.9rem;"><?= htmlspecialchars($sc['name']) ?></label>
+                            </div>
+                            <div class="pc-sc-justification" id="pc_sc_just_wrap_<?= $sc['id'] ?>" style="display:none;margin-left:25px;margin-top:6px;">
+                                <textarea name="sc_justifications[<?= $sc['id'] ?>]" rows="2" id="pc_sc_just_<?= $sc['id'] ?>" placeholder="Justification de cette sous-compétence (obligatoire)..." style="font-size:0.85rem;width:100%;"></textarea>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
-                <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Enregistrer les blocs</button>
+                <?php endforeach; ?>
+                
+                <div id="pc_validation_error" style="display:none;color:#ef4444;background:#ef444422;padding:10px;border-radius:8px;margin-bottom:10px;font-size:0.9rem;">
+                    <i class="fas fa-exclamation-triangle"></i> Chaque sous-compétence cochée doit avoir une justification !
+                </div>
+                
+                <button type="submit" class="btn-primary" style="margin-top:10px;" onclick="return validateCompetences()"><i class="fas fa-save"></i> Enregistrer tout</button>
             </form>
-            
-            <!-- Partie 2 : Sous-compétences avec justification -->
-            <h4 style="color:#fb923c;margin-bottom:10px;">2. Sous-compétences avec justification</h4>
-            <form method="POST" style="margin-bottom:20px;" onsubmit="return validateJustification(this)">
-                <input type="hidden" name="action" value="add_project_sub_competence">
-                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                <input type="hidden" name="project_id" id="pc_sub_project_id">
-                
-                <label>Sous-compétence</label>
-                <select name="sub_competence_id" required style="margin-bottom:10px;">
-                    <option value="">-- Choisir --</option>
-                    <?php 
-                    $currentBlockName = null;
-                    foreach ($subCompetences as $sc): 
-                        if ($sc['block_name'] !== $currentBlockName):
-                            if ($currentBlockName !== null) echo '</optgroup>';
-                            $currentBlockName = $sc['block_name'];
-                            echo '<optgroup label="' . htmlspecialchars($currentBlockName ?? 'Sans bloc') . '">';
-                        endif;
-                    ?>
-                    <option value="<?= $sc['id'] ?>"><?= htmlspecialchars($sc['name']) ?></option>
-                    <?php endforeach; ?>
-                    <?php if ($currentBlockName !== null) echo '</optgroup>'; ?>
-                </select>
-                
-                <label>Justification *</label>
-                <textarea name="justification" rows="3" required placeholder="Décrivez en quoi cette sous-compétence est mobilisée dans ce projet..."></textarea>
-                
-                <button type="submit" class="btn-primary" style="margin-top:10px;"><i class="fas fa-plus"></i> Ajouter</button>
-            </form>
-            
-            <div id="pc_sub_list">
-                <!-- Rempli dynamiquement par JS -->
-            </div>
         </div>
     </div>
     
-    <!-- Modal Edition Justification -->
-    <div id="editJustificationModal" class="modal">
-        <div class="modal-content">
+    <!-- Modal Compétences Expérience -->
+    <div id="expCompetencesModal" class="modal">
+        <div class="modal-content" style="max-width:800px;">
             <div class="modal-header">
-                <h3><i class="fas fa-edit"></i> Modifier la justification</h3>
-                <button type="button" class="modal-close" onclick="closeJustificationModal()">&times;</button>
+                <h3><i class="fas fa-graduation-cap"></i> Compétences — <span id="ec_exp_title"></span></h3>
+                <button type="button" class="modal-close" onclick="closeExpCompetencesAdmin()">&times;</button>
             </div>
-            <form method="POST">
-                <input type="hidden" name="action" value="edit_project_sub_competence">
+            
+            <form method="POST" id="ecForm">
+                <input type="hidden" name="action" value="save_experience_competences">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                <input type="hidden" name="psc_id" id="edit_psc_id">
+                <input type="hidden" name="experience_id" id="ec_experience_id">
                 
-                <label>Justification *</label>
-                <textarea name="justification" id="edit_psc_justification" rows="4" required></textarea>
-                
-                <div class="modal-actions">
-                    <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Enregistrer</button>
-                    <button type="button" class="btn-secondary" onclick="closeJustificationModal()">Annuler</button>
+                <?php foreach ($competenceBlocks as $block): ?>
+                <div class="pc-block-section" data-block-id="<?= $block['id'] ?>" style="margin-bottom:20px;padding:15px;border:1px solid #2a2a3e;border-radius:8px;">
+                    <div class="checkbox-group" style="margin-bottom:10px;">
+                        <input type="checkbox" name="competence_block_ids[]" value="<?= $block['id'] ?>" id="ec_block_<?= $block['id'] ?>" class="ec-block-checkbox" onchange="toggleEcBlockDetail(<?= $block['id'] ?>)">
+                        <label for="ec_block_<?= $block['id'] ?>" style="color:#fff;font-weight:600;font-size:1.05rem;">
+                            <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:<?= htmlspecialchars($block['color'] ?? '#f97316') ?>;margin-right:8px;"></span>
+                            <?= htmlspecialchars($block['name']) ?>
+                        </label>
+                    </div>
+                    
+                    <div class="ec-block-detail" id="ec_block_detail_<?= $block['id'] ?>" style="display:none;margin-left:25px;margin-top:10px;">
+                        <label style="color:#fb923c;font-size:0.9rem;margin-bottom:8px;display:block;">Sous-compétences :</label>
+                        <?php 
+                        $blockSubs = array_filter($subCompetences, function($sc) use ($block) { 
+                            return $sc['competence_block_id'] == $block['id']; 
+                        });
+                        foreach ($blockSubs as $sc): ?>
+                        <div class="pc-sc-item" style="margin-bottom:10px;padding:8px;border:1px solid #1a1a2e;border-radius:6px;">
+                            <div class="checkbox-group" style="margin-bottom:4px;">
+                                <input type="checkbox" name="sub_competence_ids[]" value="<?= $sc['id'] ?>" id="ec_sc_<?= $sc['id'] ?>" class="ec-sc-checkbox" data-block-id="<?= $block['id'] ?>" onchange="toggleEcScJustification(<?= $sc['id'] ?>)">
+                                <label for="ec_sc_<?= $sc['id'] ?>" style="color:#ccc;font-size:0.9rem;"><?= htmlspecialchars($sc['name']) ?></label>
+                            </div>
+                            <div id="ec_sc_just_wrap_<?= $sc['id'] ?>" style="display:none;margin-left:25px;margin-top:6px;">
+                                <textarea name="sc_justifications[<?= $sc['id'] ?>]" rows="2" id="ec_sc_just_<?= $sc['id'] ?>" placeholder="Justification de cette sous-compétence (obligatoire)..." style="font-size:0.85rem;width:100%;"></textarea>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
+                <?php endforeach; ?>
+                
+                <div id="ec_validation_error" style="display:none;color:#ef4444;background:#ef444422;padding:10px;border-radius:8px;margin-bottom:10px;font-size:0.9rem;">
+                    <i class="fas fa-exclamation-triangle"></i> Chaque sous-compétence cochée doit avoir une justification !
+                </div>
+                
+                <button type="submit" class="btn-primary" style="margin-top:10px;" onclick="return validateExpCompetences()"><i class="fas fa-save"></i> Enregistrer tout</button>
             </form>
         </div>
     </div>
     
     <script>
-        // Données des compétences par projet (pour charger dynamiquement)
+        // Données des compétences par projet
         var projectCompetenceData = <?php
             $pcData = [];
             foreach ($projects as $p) {
                 $pid = $p['id'];
-                $blocks = $db->fetchAll("SELECT competence_block_id FROM project_competence_blocks WHERE project_id = ?", [$pid]);
-                $subs = $db->fetchAll("SELECT psc.id as psc_id, psc.justification, sc.name as sc_name, cb.name as block_name 
-                    FROM project_sub_competences psc 
-                    JOIN sub_competences sc ON psc.sub_competence_id = sc.id 
-                    LEFT JOIN competence_blocks cb ON sc.competence_block_id = cb.id 
-                    WHERE psc.project_id = ? 
-                    ORDER BY cb.order_index, sc.order_index", [$pid]);
+                $blocks = $db->fetchAll("SELECT competence_block_id, justification FROM project_competence_blocks WHERE project_id = ?", [$pid]);
+                $subs = $db->fetchAll("SELECT sub_competence_id, justification FROM project_sub_competences WHERE project_id = ?", [$pid]);
+                $blockData = [];
+                foreach ($blocks as $b) {
+                    $blockData[$b['competence_block_id']] = $b['justification'] ?? '';
+                }
+                $subsData = [];
+                foreach ($subs as $s) {
+                    $subsData[$s['sub_competence_id']] = $s['justification'] ?? '';
+                }
                 $pcData[$pid] = [
-                    'blocks' => array_column($blocks, 'competence_block_id'),
-                    'subs' => $subs
+                    'blocks' => $blockData,
+                    'subs' => $subsData
                 ];
             }
             echo json_encode($pcData);
+        ?>;
+
+        // Données des compétences par expérience
+        var expCompetenceData = <?php
+            $ecData = [];
+            foreach ($experiences as $e) {
+                $eid = $e['id'];
+                $blocks = $db->fetchAll("SELECT competence_block_id FROM experience_competence_blocks WHERE experience_id = ?", [$eid]);
+                $subs = $db->fetchAll("SELECT sub_competence_id, justification FROM experience_sub_competences WHERE experience_id = ?", [$eid]);
+                $blockIds = [];
+                foreach ($blocks as $b) { $blockIds[] = $b['competence_block_id']; }
+                $subsData = [];
+                foreach ($subs as $s) { $subsData[$s['sub_competence_id']] = $s['justification'] ?? ''; }
+                $ecData[$eid] = ['blocks' => $blockIds, 'subs' => $subsData];
+            }
+            echo json_encode($ecData);
         ?>;
 
         function showSection(id) {
@@ -1846,62 +1938,160 @@ $subCompetences = $db->fetchAll("SELECT sc.*, cb.name as block_name FROM sub_com
         }
         
         // ====== COMPÉTENCES PROJET ======
-        function openProjectCompetences(projectId, projectTitle) {
-            document.getElementById('pc_project_title').textContent = projectTitle;
-            document.getElementById('pc_blocks_project_id').value = projectId;
-            document.getElementById('pc_sub_project_id').value = projectId;
-            
-            // Charger les blocs cochés
-            var data = projectCompetenceData[projectId] || {blocks: [], subs: []};
-            document.querySelectorAll('.pc-block-checkbox').forEach(function(cb) {
-                cb.checked = data.blocks.indexOf(parseInt(cb.value)) !== -1;
-            });
-            
-            // Charger la liste des sous-compétences
-            var listHtml = '';
-            if (data.subs.length === 0) {
-                listHtml = '<p style="color:#6c6c7c;">Aucune sous-compétence ajoutée.</p>';
-            } else {
-                data.subs.forEach(function(s) {
-                    var excerpt = s.justification.length > 80 ? s.justification.substring(0, 80) + '...' : s.justification;
-                    listHtml += '<div class="project-item" style="flex-direction:column;align-items:flex-start;gap:8px;">' +
-                        '<div style="width:100%;display:flex;justify-content:space-between;align-items:center;">' +
-                        '<div><strong>' + escapeHtml(s.sc_name) + '</strong> <small style="color:#6c6c7c;">(' + escapeHtml(s.block_name || '') + ')</small></div>' +
-                        '<div style="display:flex;gap:8px;">' +
-                        '<button type="button" class="btn-edit" onclick="editJustification(' + s.psc_id + ', ' + JSON.stringify(JSON.stringify(s.justification)) + ')"><i class="fas fa-edit"></i></button>' +
-                        '<form method="POST" style="display:inline;" onsubmit="return confirm(\'Retirer cette sous-compétence ?\');">' +
-                        '<input type="hidden" name="action" value="delete_project_sub_competence">' +
-                        '<input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">' +
-                        '<input type="hidden" name="psc_id" value="' + s.psc_id + '">' +
-                        '<button type="submit" class="btn-danger"><i class="fas fa-trash"></i></button></form></div></div>' +
-                        '<p style="color:#a0a0b0;font-size:0.85rem;margin:0;">' + escapeHtml(excerpt) + '</p></div>';
+        function toggleBlockDetail(blockId) {
+            var cb = document.getElementById('pc_block_' + blockId);
+            var detail = document.getElementById('pc_block_detail_' + blockId);
+            detail.style.display = cb.checked ? 'block' : 'none';
+            // Décocher les sous-compétences et cacher justifications si le bloc est décoché
+            if (!cb.checked) {
+                detail.querySelectorAll('.pc-sc-checkbox').forEach(function(scCb) {
+                    scCb.checked = false;
+                    toggleScJustification(parseInt(scCb.value));
                 });
             }
-            document.getElementById('pc_sub_list').innerHTML = listHtml;
+        }
+
+        function toggleScJustification(scId) {
+            var cb = document.getElementById('pc_sc_' + scId);
+            var wrap = document.getElementById('pc_sc_just_wrap_' + scId);
+            if (wrap) {
+                wrap.style.display = cb.checked ? 'block' : 'none';
+                if (!cb.checked) {
+                    var textarea = document.getElementById('pc_sc_just_' + scId);
+                    if (textarea) textarea.value = '';
+                }
+            }
+        }
+
+        function validateCompetences() {
+            var valid = true;
+            document.querySelectorAll('.pc-sc-checkbox:checked').forEach(function(cb) {
+                var scId = cb.value;
+                var textarea = document.getElementById('pc_sc_just_' + scId);
+                if (textarea && textarea.value.trim() === '') {
+                    valid = false;
+                    textarea.style.borderColor = '#ef4444';
+                } else if (textarea) {
+                    textarea.style.borderColor = '#3a3a5a';
+                }
+            });
+            var errorDiv = document.getElementById('pc_validation_error');
+            errorDiv.style.display = valid ? 'none' : 'block';
+            return valid;
+        }
+
+        function openProjectCompetences(projectId, projectTitle) {
+            document.getElementById('pc_project_title').textContent = projectTitle;
+            document.getElementById('pc_project_id').value = projectId;
+            document.getElementById('pc_validation_error').style.display = 'none';
+            
+            var data = projectCompetenceData[projectId] || {blocks: {}, subs: {}};
+            
+            // Cocher les blocs
+            document.querySelectorAll('.pc-block-checkbox').forEach(function(cb) {
+                var bid = parseInt(cb.value);
+                var isChecked = data.blocks.hasOwnProperty(bid);
+                cb.checked = isChecked;
+                var detail = document.getElementById('pc_block_detail_' + bid);
+                detail.style.display = isChecked ? 'block' : 'none';
+            });
+            
+            // Cocher les sous-compétences et remplir les justifications
+            document.querySelectorAll('.pc-sc-checkbox').forEach(function(cb) {
+                var scId = parseInt(cb.value);
+                var isChecked = data.subs.hasOwnProperty(scId);
+                cb.checked = isChecked;
+                var wrap = document.getElementById('pc_sc_just_wrap_' + scId);
+                if (wrap) wrap.style.display = isChecked ? 'block' : 'none';
+                var textarea = document.getElementById('pc_sc_just_' + scId);
+                if (textarea) {
+                    textarea.value = isChecked ? (data.subs[scId] || '') : '';
+                    textarea.style.borderColor = '#3a3a5a';
+                }
+            });
             
             document.getElementById('projectCompetencesModal').classList.add('active');
         }
+
         function closeProjectCompetencesModal() {
             document.getElementById('projectCompetencesModal').classList.remove('active');
         }
-        
-        function editJustification(pscId, justification) {
-            document.getElementById('edit_psc_id').value = pscId;
-            document.getElementById('edit_psc_justification').value = justification;
-            document.getElementById('editJustificationModal').classList.add('active');
-        }
-        function closeJustificationModal() {
-            document.getElementById('editJustificationModal').classList.remove('active');
-        }
-        
-        function validateJustification(form) {
-            var j = form.querySelector('textarea[name="justification"]');
-            if (!j.value.trim()) {
-                alert('La justification est obligatoire !');
-                j.focus();
-                return false;
+
+        // ====== COMPÉTENCES EXPÉRIENCE ======
+        function toggleEcBlockDetail(blockId) {
+            var cb = document.getElementById('ec_block_' + blockId);
+            var detail = document.getElementById('ec_block_detail_' + blockId);
+            detail.style.display = cb.checked ? 'block' : 'none';
+            if (!cb.checked) {
+                detail.querySelectorAll('.ec-sc-checkbox').forEach(function(scCb) {
+                    scCb.checked = false;
+                    toggleEcScJustification(parseInt(scCb.value));
+                });
             }
-            return true;
+        }
+
+        function toggleEcScJustification(scId) {
+            var cb = document.getElementById('ec_sc_' + scId);
+            var wrap = document.getElementById('ec_sc_just_wrap_' + scId);
+            if (wrap) {
+                wrap.style.display = cb.checked ? 'block' : 'none';
+                if (!cb.checked) {
+                    var textarea = document.getElementById('ec_sc_just_' + scId);
+                    if (textarea) textarea.value = '';
+                }
+            }
+        }
+
+        function validateExpCompetences() {
+            var valid = true;
+            document.querySelectorAll('.ec-sc-checkbox:checked').forEach(function(cb) {
+                var scId = cb.value;
+                var textarea = document.getElementById('ec_sc_just_' + scId);
+                if (textarea && textarea.value.trim() === '') {
+                    valid = false;
+                    textarea.style.borderColor = '#ef4444';
+                } else if (textarea) {
+                    textarea.style.borderColor = '#3a3a5a';
+                }
+            });
+            var errorDiv = document.getElementById('ec_validation_error');
+            errorDiv.style.display = valid ? 'none' : 'block';
+            return valid;
+        }
+
+        function openExpCompetencesAdmin(expId, expTitle) {
+            document.getElementById('ec_exp_title').textContent = expTitle;
+            document.getElementById('ec_experience_id').value = expId;
+            document.getElementById('ec_validation_error').style.display = 'none';
+            
+            var data = expCompetenceData[expId] || {blocks: [], subs: {}};
+            
+            document.querySelectorAll('.ec-block-checkbox').forEach(function(cb) {
+                var bid = parseInt(cb.value);
+                var isChecked = data.blocks.indexOf(bid) !== -1;
+                cb.checked = isChecked;
+                var detail = document.getElementById('ec_block_detail_' + bid);
+                detail.style.display = isChecked ? 'block' : 'none';
+            });
+            
+            document.querySelectorAll('.ec-sc-checkbox').forEach(function(cb) {
+                var scId = parseInt(cb.value);
+                var isChecked = data.subs.hasOwnProperty(scId);
+                cb.checked = isChecked;
+                var wrap = document.getElementById('ec_sc_just_wrap_' + scId);
+                if (wrap) wrap.style.display = isChecked ? 'block' : 'none';
+                var textarea = document.getElementById('ec_sc_just_' + scId);
+                if (textarea) {
+                    textarea.value = isChecked ? (data.subs[scId] || '') : '';
+                    textarea.style.borderColor = '#3a3a5a';
+                }
+            });
+            
+            document.getElementById('expCompetencesModal').classList.add('active');
+        }
+
+        function closeExpCompetencesAdmin() {
+            document.getElementById('expCompetencesModal').classList.remove('active');
         }
         
         function escapeHtml(text) {

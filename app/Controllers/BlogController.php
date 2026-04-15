@@ -4,37 +4,22 @@
  */
 class BlogController extends Controller
 {
-    // Flux RSS pour la veille sur la sécurité des API
+    // Flux RSS pour la veille sur la modernisation des systèmes mainframe
     private $rssFeeds = [
         [
-            'name' => 'CERT-FR (ANSSI)',
-            'url' => 'https://www.cert.ssi.gouv.fr/feed/',
-            'category' => 'Alertes Sécurité'
+            'name' => 'IBM Z Blog',
+            'url' => 'https://community.ibm.com/community/user/ibmz-and-linuxone/blogs?format=rss',
+            'category' => 'Mainframe & IBM Z'
         ],
         [
-            'name' => 'The Hacker News',
-            'url' => 'https://feeds.feedburner.com/TheHackersNews',
-            'category' => 'Actualités Cybersécurité'
+            'name' => 'Planet Mainframe',
+            'url' => 'https://planetmainframe.com/feed/',
+            'category' => 'Actualités Mainframe'
         ],
         [
-            'name' => 'Krebs on Security',
-            'url' => 'https://krebsonsecurity.com/feed/',
-            'category' => 'Sécurité Web'
-        ],
-        [
-            'name' => 'OWASP Blog',
-            'url' => 'https://owasp.org/feed.xml',
-            'category' => 'Sécurité Applications'
-        ],
-        [
-            'name' => 'Security Weekly',
-            'url' => 'https://securityweekly.com/feed/',
-            'category' => 'Actualités Sécurité'
-        ],
-        [
-            'name' => 'Dark Reading',
-            'url' => 'https://www.darkreading.com/rss.xml',
-            'category' => 'Cybersécurité'
+            'name' => 'IBM Developer',
+            'url' => 'https://developer.ibm.com/blogs/feed/',
+            'category' => 'Développement IBM'
         ]
     ];
 
@@ -49,7 +34,7 @@ class BlogController extends Controller
             'pageTitle' => 'Blog',
             'posts' => $posts,
             'veilleArticles' => $veilleArticles,
-            'veilleTheme' => 'Sécurisation des API dans les applications web'
+            'veilleTheme' => 'Modernisation des systèmes mainframe'
         ]);
     }
 
@@ -92,13 +77,15 @@ class BlogController extends Controller
 
         // Mots-clés pour filtrer les articles pertinents
         $keywords = [
-            'api', 'security', 'sécurité', 'authentication', 'authentification',
-            'oauth', 'jwt', 'token', 'password', 'mot de passe', 'hash', 'bcrypt',
-            'xss', 'csrf', 'sql injection', 'injection', 'vulnerability', 'vulnérabilité',
-            'rgpd', 'gdpr', 'data protection', 'encryption', 'chiffrement',
-            'ssl', 'tls', 'https', 'certificate', 'certificat', 'web application',
-            'firewall', 'waf', 'penetration', 'pentest', 'exploit', 'breach',
-            'ransomware', 'malware', 'phishing', 'cyberattack', 'cyberattaque'
+            'mainframe', 'cobol', 'jcl', 'ibm z', 'z/os', 'zos', 'ibm z16', 'ibm z15',
+            'legacy', 'modernization', 'modernisation', 'migration', 'rehosting',
+            'cics', 'ims', 'db2', 'vsam', 'tso', 'ispf', 'rexx',
+            'micro focus', 'openlegacy', 'compuware', 'rocket software',
+            'linuxone', 'linux on z', 'cloud mainframe', 'hybrid cloud',
+            'batch processing', 'transaction', 'sysplex',
+            'devops mainframe', 'zowe', 'ansible z/os', 'git mainframe',
+            'digital transformation', 'transformation digitale',
+            'banking legacy', 'insurance legacy', 'financial mainframe'
         ];
 
         foreach ($this->rssFeeds as $feed) {
