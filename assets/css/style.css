@@ -1877,6 +1877,7 @@ ul, ol {
     display: flex;
     gap: var(--spacing-md);
     flex-wrap: wrap;
+    margin-top: var(--spacing-md);
 }
 
 .modal-links .btn {
