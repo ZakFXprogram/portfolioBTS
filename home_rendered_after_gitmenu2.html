@@ -1,0 +1,338 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="assets-path" content="/assets">
+    <title>Accueil - Mon Portfolio</title>
+    <meta name="description" content="Étudiant en BTS SIO SLAM, passionné par le développement logiciel et les systèmes d’information.
+
+Je conçois et développe des applications orientées données dans différent langage, avec une forte attention portée à la logique métier, à la gestion de bases de données et à la structuration du code.
+
+J’ai travaillé sur des projets applicatifs intégrant des bases de données relationnelles, des jointures complexes et des interfaces utilisateur, notamment dans des contextes de gestion (clubs, matchs, catégories, etc.).
+
+Curieux et en constante progression, je m’intéresse également à Python, à l’analyse de données, aux bases de l’IA/ML, ainsi qu’aux applications numériques dans la finance et les systèmes décisionnels.
+
+Mon objectif est de développer des solutions fiables, utiles et bien structurées, tout en renforçant mes compétences techniques et analytiques.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/images/favicon.png">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="http://localhost:8000" class="logo">
+                    <span class="logo-prefix">~</span>
+                    <span class="logo-name">E. Zakaria</span>
+                    <span class="logo-cursor">$</span>
+                    <span class="cursor-blink">▌</span>
+                </a>
+                
+                <ul class="nav-links">
+                    <li><a href="http://localhost:8000" class="active">Accueil</a></li>
+                    <li><a href="http://localhost:8000/blog" class="">Blog</a></li>
+                    <li><a href="http://localhost:8000/projects" class="">Projets</a></li>
+                    <li><a href="http://localhost:8000/resume" class="">Parcours</a></li>
+                    <li><a href="http://localhost:8000/tools" class="">Outils</a></li>
+                </ul>
+
+                
+                <div class="nav-social">
+                                        <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" title="LinkedIn">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    
+                    <div class="git-switcher">
+                        <button type="button" class="git-switcher-trigger" aria-label="Liens Git">
+                            <i class="fa-brands fa-git-alt"></i>
+                        </button>
+                        <div class="git-switcher-menu" role="menu" aria-label="Plateformes Git">
+                            <a href="https://gitlab.com/" target="_blank" rel="noopener noreferrer" class="git-switcher-item" role="menuitem">
+                                <i class="fa-brands fa-gitlab"></i>
+                                <span>GitLab</span>
+                            </a>
+                            <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="git-switcher-item" role="menuitem">
+                                <i class="fa-brands fa-github"></i>
+                                <span>GitHub</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="mobile-menu-btn" aria-label="Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        <ul class="mobile-nav-links">
+            <li><a href="http://localhost:8000">Accueil</a></li>
+            <li><a href="http://localhost:8000/blog">Blog</a></li>
+            <li><a href="http://localhost:8000/projects">Projets</a></li>
+            <li><a href="http://localhost:8000/resume">Parcours</a></li>
+            <li><a href="http://localhost:8000/tools">Outils</a></li>
+        </ul>
+        <div class="mobile-social">
+                        <a href="https://github.com/" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-github"></i>
+            </a>
+                        <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-linkedin"></i>
+            </a>
+                    </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main">
+
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    Bienvenue ! Je suis E. Zakaria, un 
+                    <span class="highlight">Étudiant développeur Full-Stack</span>.
+                </h1>
+                
+                <div class="hero-description">
+                    Étudiant en BTS SIO SLAM, passionné par le développement logiciel et les systèmes d’information.<br />
+<br />
+Je conçois et développe des applications orientées données dans différent langage, avec une forte attention portée à la logique métier, à la gestion de bases de données et à la structuration du code.<br />
+<br />
+J’ai travaillé sur des projets applicatifs intégrant des bases de données relationnelles, des jointures complexes et des interfaces utilisateur, notamment dans des contextes de gestion (clubs, matchs, catégories, etc.).<br />
+<br />
+Curieux et en constante progression, je m’intéresse également à Python, à l’analyse de données, aux bases de l’IA/ML, ainsi qu’aux applications numériques dans la finance et les systèmes décisionnels.<br />
+<br />
+Mon objectif est de développer des solutions fiables, utiles et bien structurées, tout en renforçant mes compétences techniques et analytiques.                </div>
+            </div>
+            
+            <div class="hero-side">
+                <div class="hero-avatar">
+                    <img src="/assets/images/avatar.jpg" alt="E. Zakaria" onerror="this.src='https://via.placeholder.com/300x350/1a1a2e/eee?text=Avatar'">
+                </div>
+                
+                <div class="hero-clock">
+                    <p class="clock-timezone">Europe/Paris</p>
+                    <p class="clock-time" id="currentTime">--:--:--</p>
+                    <p class="clock-date" id="currentDate">--</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Projects -->
+<section class="section featured-projects">
+    <div class="container">
+        <h2 class="section-title">Projets Récents</h2>
+        
+        <div class="projects-grid">
+                        <article class="project-card" data-aos="fade-up" onclick="openProjectModal(5)">
+                <div class="project-card-image">
+                    <img src="/assets/images/projects/gex-main.png" 
+                         alt="GEX : Gamma Exposure Financial Tool"
+                         onerror="this.src='https://via.placeholder.com/600x400/1a1a2e/eee?text=GEX+%3A+Gamma+Exposure+Financial+Tool'">
+                    <div class="project-card-overlay">
+                        <i class="fas fa-expand"></i>
+                    </div>
+                </div>
+                <div class="project-card-content">
+                    <h3 class="project-card-title">GEX : Gamma Exposure Financial Tool</h3>
+                    <p class="project-card-description">Le GEX (Gamma Exposure) mesure l’exposition des market makers au gamma des options sur un indice. Il permet d’anticiper les mouvements de marché, d’identifier les niveaux clés et d’optimiser les stratégies de trading en fonction de la dynamique créée par les hedges.</p>
+                    
+                                        <div class="project-card-tags">
+                                                <span class="tag">Python</span>
+                                            </div>
+                                    </div>
+            </article>
+                        <article class="project-card" data-aos="fade-up" onclick="openProjectModal(11)">
+                <div class="project-card-image">
+                    <img src="/assets/images/projects/Vformation.png" 
+                         alt="AP 3.1 M2L Site Dynamique"
+                         onerror="this.src='https://via.placeholder.com/600x400/1a1a2e/eee?text=AP+3.1+M2L+Site+Dynamique'">
+                    <div class="project-card-overlay">
+                        <i class="fas fa-expand"></i>
+                    </div>
+                </div>
+                <div class="project-card-content">
+                    <h3 class="project-card-title">AP 3.1 M2L Site Dynamique</h3>
+                    <p class="project-card-description">Ce projet a consisté à faire évoluer le site statique de la Maison des Ligues de Lorraine en une application web dynamique permettant la gestion des ligues, des intervenants (salariés et bénévoles) et des formations. L’objectif a été d’enrichir les fonctionnalités du site tout en respectant la réglementation liée à la protection des données personnelles.</p>
+                    
+                                        <div class="project-card-tags">
+                                                <span class="tag">Php</span>
+                                                <span class="tag">HMTL</span>
+                                                <span class="tag">CSS</span>
+                                                <span class="tag">MySQL</span>
+                                            </div>
+                                    </div>
+            </article>
+                        <article class="project-card" data-aos="fade-up" onclick="openProjectModal(12)">
+                <div class="project-card-image">
+                    <img src="/assets/images/projects/api1.png" 
+                         alt="AP 3.2 Aux claviers Citoyens"
+                         onerror="this.src='https://via.placeholder.com/600x400/1a1a2e/eee?text=AP+3.2+Aux+claviers+Citoyens'">
+                    <div class="project-card-overlay">
+                        <i class="fas fa-expand"></i>
+                    </div>
+                </div>
+                <div class="project-card-content">
+                    <h3 class="project-card-title">AP 3.2 Aux claviers Citoyens</h3>
+                    <p class="project-card-description">Application de gestion de tournois e-sport permettant de suivre les scores, les équipes et les matchs en temps réel dans un environnement militaire.</p>
+                    
+                                        <div class="project-card-tags">
+                                                <span class="tag">Php</span>
+                                                <span class="tag">HTML</span>
+                                                <span class="tag">CSS</span>
+                                            </div>
+                                    </div>
+            </article>
+                    </div>
+        
+        <div class="section-cta">
+            <a href="http://localhost:8000/projects" class="btn btn-primary">Voir tous les projets</a>
+        </div>
+    </div>
+</section>
+
+<!-- Project Modal -->
+<div id="projectModal" class="project-modal">
+    <div class="project-modal-content">
+        <button class="modal-close" onclick="closeProjectModal()">
+            <i class="fas fa-times"></i>
+        </button>
+        
+        <div class="modal-gallery">
+            <div class="gallery-main">
+                <button class="gallery-nav gallery-prev" onclick="prevImage()">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <img id="modalMainImage" src="" alt="">
+                <button class="gallery-nav gallery-next" onclick="nextImage()">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <div class="gallery-thumbnails" id="galleryThumbnails"></div>
+        </div>
+        
+        <div class="modal-details">
+            <h2 id="modalTitle"></h2>
+            <p id="modalDescription"></p>
+            
+            <div id="modalTechnologies" class="modal-technologies"></div>
+            
+            <div id="modalCompetenceBlocks" class="modal-competence-blocks"></div>
+            
+            <div id="modalLinks" class="modal-links"></div>
+        </div>
+    </div>
+</div>
+
+
+
+    </main>
+
+    <!-- Image Lightbox -->
+    <div id="imageLightbox" class="image-lightbox">
+        <button class="lightbox-close" onclick="closeLightbox()">
+            <i class="fas fa-times"></i>
+        </button>
+        <button class="lightbox-nav lightbox-prev" onclick="lightboxPrev()">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="lightbox-content">
+            <img id="lightboxImage" src="" alt="Image agrandie">
+        </div>
+        <button class="lightbox-nav lightbox-next" onclick="lightboxNext()">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        <div class="lightbox-counter">
+            <span id="lightboxCounter">1 / 1</span>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p class="footer-copyright">© 2026 E. Zakaria</p>
+                
+                <ul class="footer-links">
+                    <li><a href="http://localhost:8000">Accueil</a></li>
+                    <li><a href="http://localhost:8000/blog">Blog</a></li>
+                    <li><a href="http://localhost:8000/projects">Projets</a></li>
+                    <li><a href="http://localhost:8000/resume">Parcours</a></li>
+                    <li><a href="http://localhost:8000/tools">Outils</a></li>
+                </ul>
+
+                <div class="footer-social">
+                                        <a href="https://github.com/" target="_blank" rel="noopener noreferrer" title="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                                        <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" title="LinkedIn">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                                    </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="/assets/js/app.js"></script>
+</body>
+</html>
+
+<!-- Project Data for JavaScript (must be after app.js is loaded) -->
+<script>
+window.projectsData = {
+        5: {
+        id: 5,
+        title: "GEX : Gamma Exposure Financial Tool",
+        description: "Le GEX (Gamma Exposure) est un outil d'analyse financi\u00e8re qui mesure l'exposition au risque \"Gamma\" des teneurs de march\u00e9 (market makers). Il permet de visualiser comment les positions sur les options (achats et ventes de Calls et Puts) contraignent ces interm\u00e9diaires \u00e0 acheter ou vendre l'actif r\u00e9el pour couvrir leur risque, influen\u00e7ant ainsi la volatilit\u00e9 et la direction du prix.",
+        image: "gex-main.png",
+        images: ["gex-main.png","evolve-gex.png","flip-gex.png","dashboard-gex.png"],
+        technologies: ["Python"],
+        url: "",
+        github_url: "",
+        slug: "gamma-exposure",
+        competence_blocks: []    },
+        11: {
+        id: 11,
+        title: "AP 3.1 M2L Site Dynamique",
+        description: "La Maison des Ligues de Lorraine disposait initialement d\u2019un site statique destin\u00e9 \u00e0 informer les internautes sur ses activit\u00e9s. Toutefois, afin de r\u00e9pondre \u00e0 de nouveaux besoins fonctionnels, il a \u00e9t\u00e9 d\u00e9cid\u00e9 de faire \u00e9voluer ce site vers une application web plus compl\u00e8te et dynamique int\u00e9grant plusieurs fonctionnalit\u00e9s de gestion.\r\n\r\nLe projet a d\u2019abord port\u00e9 sur la gestion des ligues. Les informations d\u00e9j\u00e0 consultables ont \u00e9t\u00e9 enrichies afin de permettre \u00e0 tout internaute d\u2019acc\u00e9der, pour chaque ligue, \u00e0 son nom, son site internet, une pr\u00e9sentation d\u00e9taill\u00e9e, ainsi qu\u2019\u00e0 la liste des clubs affili\u00e9s. Pour chaque club, des informations de localisation g\u00e9ographique ont \u00e9t\u00e9 int\u00e9gr\u00e9es. Le secr\u00e9taire de la M2L a dispos\u00e9 de droits sp\u00e9cifiques lui permettant d\u2019ajouter, modifier et supprimer les informations relatives aux ligues et aux clubs.\r\n\r\nUne seconde partie du projet a concern\u00e9 la gestion des intervenants, qu\u2019ils soient salari\u00e9s ou b\u00e9n\u00e9voles. Les informations les concernant ont \u00e9t\u00e9 rendues consultables en ligne, avec une gestion stricte des droits d\u2019acc\u00e8s. Les salari\u00e9s ont pu consulter leurs contrats de travail ainsi que les bulletins de salaire associ\u00e9s, stock\u00e9s au format PDF, tandis que les b\u00e9n\u00e9voles ont eu acc\u00e8s uniquement \u00e0 leurs informations personnelles. Le responsable des ressources humaines a \u00e9t\u00e9 le seul habilit\u00e9 \u00e0 g\u00e9rer l\u2019ensemble des donn\u00e9es relatives aux intervenants, aux contrats, aux fonctions et aux bulletins de salaire, ainsi qu\u2019\u00e0 l\u2019importation des documents.\r\n\r\nEnfin, le projet a int\u00e9gr\u00e9 la gestion des formations propos\u00e9es par la M2L. Apr\u00e8s authentification, les intervenants ont pu consulter les formations ouvertes aux inscriptions, d\u00e9poser ou supprimer des demandes d\u2019inscription, et suivre l\u2019\u00e9tat de leurs demandes. Le responsable formation a dispos\u00e9 des droits n\u00e9cessaires pour g\u00e9rer les formations, consulter les demandes d\u2019inscription et valider ou refuser celles-ci, tout en respectant les contraintes li\u00e9es \u00e0 l\u2019effectif maximal de chaque formation.\r\n\r\nL\u2019ensemble du projet a \u00e9t\u00e9 con\u00e7u en tenant compte des obligations l\u00e9gales en mati\u00e8re de protection des donn\u00e9es personnelles, garantissant ainsi la confidentialit\u00e9 et la s\u00e9curit\u00e9 des informations trait\u00e9es.",
+        image: "Vformation.png",
+        images: ["Vformation.png","Vprofil.png","Vaccueil.png","Vconnect.png"],
+        technologies: ["Php","HMTL","CSS","MySQL"],
+        url: "",
+        github_url: "",
+        slug: "m2l-site-dynamique",
+        competence_blocks: [{"id":1,"name":"G\u00e9rer le patrimoine informatique","icon":"","color":"#ffffff","order_index":0},{"id":2,"name":"R\u00e9pondre aux incidents et aux demandes d\u2019assistance et d\u2019\u00e9volution","icon":"","color":"#ffffff","order_index":0},{"id":3,"name":"D\u00e9velopper la pr\u00e9sence en ligne de l\u2019organisation","icon":"","color":"#ffffff","order_index":0},{"id":4,"name":"Travailler en mode projet","icon":"","color":"#ffffff","order_index":0},{"id":5,"name":"Mettre \u00e0 disposition des utilisateurs un service informatique","icon":"","color":"#ffffff","order_index":0},{"id":6,"name":"Organiser son d\u00e9veloppement professionnel","icon":"","color":"#ffffff","order_index":0}]    },
+        12: {
+        id: 12,
+        title: "AP 3.2 Aux claviers Citoyens",
+        description: "Dans le cadre du projet Aux Claviers Citoyens, cette application a pour objectif de g\u00e9rer et visualiser des tournois de e-sport destin\u00e9s \u00e0 un environnement militaire.\r\nElle permet l\u2019authentification s\u00e9curis\u00e9e des utilisateurs, la gestion des profils, la cr\u00e9ation et l\u2019administration de tournois, l\u2019inscription des \u00e9quipes ainsi que le suivi des matchs et des scores en temps r\u00e9el.\r\n\r\nL\u2019application s\u2019appuie sur une API REST s\u00e9curis\u00e9e (OAuth2) et vise \u00e0 d\u00e9velopper des comp\u00e9tences cl\u00e9s telles que la prise de d\u00e9cision rapide, le travail en \u00e9quipe et la gestion du stress, tout en renfor\u00e7ant la coh\u00e9sion et l\u2019esprit de corps.\r\nElle est con\u00e7ue pour \u00eatre utilis\u00e9e conjointement avec des objets connect\u00e9s afin de proposer une exp\u00e9rience immersive liant comp\u00e9tition virtuelle et effets r\u00e9els.\r\n\r\nCe projet mobilise les comp\u00e9tences des \u00e9tudiants en BTS SIO (SLAM\/SISR) et BTS CIEL, couvrant \u00e0 la fois le d\u00e9veloppement applicatif, l\u2019infrastructure r\u00e9seau et le d\u00e9ploiement serveur, avec une possible extension front-end pour am\u00e9liorer l\u2019exp\u00e9rience utilisateur.",
+        image: "api1.png",
+        images: ["api1.png","api2.png","api3.png"],
+        technologies: ["Php","HTML","CSS"],
+        url: "",
+        github_url: "",
+        slug: "aux-claviers-citoyens",
+        competence_blocks: [{"id":1,"name":"G\u00e9rer le patrimoine informatique","icon":"","color":"#ffffff","order_index":0},{"id":2,"name":"R\u00e9pondre aux incidents et aux demandes d\u2019assistance et d\u2019\u00e9volution","icon":"","color":"#ffffff","order_index":0},{"id":4,"name":"Travailler en mode projet","icon":"","color":"#ffffff","order_index":0},{"id":5,"name":"Mettre \u00e0 disposition des utilisateurs un service informatique","icon":"","color":"#ffffff","order_index":0},{"id":6,"name":"Organiser son d\u00e9veloppement professionnel","icon":"","color":"#ffffff","order_index":0}]    },
+    };
+</script>
+

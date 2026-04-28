@@ -32,7 +32,12 @@ class ProjectController extends Controller
             return;
         }
 
-        $project = $this->db->fetch("SELECT * FROM projects WHERE slug = ?", [$slug]);
+        $slug = trim((string)$slug);
+
+        $project = $this->db->fetch(
+            "SELECT * FROM projects WHERE slug = ? OR TRIM(slug) = ? LIMIT 1",
+            [$slug, $slug]
+        );
 
         if (!$project) {
             $this->redirect('projects');

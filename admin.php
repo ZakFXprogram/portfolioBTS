@@ -185,6 +185,14 @@ function checkCSRF() {
 }
 checkCSRF();
 
+function generateSlug($text) {
+    $text = trim((string)$text);
+    $text = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $text);
+    $text = strtolower($text ?: 'article');
+    $text = preg_replace('/[^a-z0-9]+/', '-', $text);
+    return trim($text, '-') ?: 'article';
+}
+
 $db = Database::getInstance();
 $message = '';
 $messageType = '';
@@ -199,6 +207,23 @@ try {
     if (!$hasJust) {
         $db->query("ALTER TABLE project_sub_competences ADD COLUMN justification TEXT DEFAULT ''");
     }
+} catch (Exception $e) {}
+
+// Migration auto : table documents de veille manuels
+try {
+    $db->query("CREATE TABLE IF NOT EXISTS veille_documents (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title VARCHAR(255) NOT NULL,
+        link VARCHAR(500) NOT NULL,
+        description TEXT,
+        source VARCHAR(255),
+        category VARCHAR(255),
+        published_at DATETIME,
+        is_active INTEGER DEFAULT 1,
+        order_index INTEGER DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )");
 } catch (Exception $e) {}
 
 // Migration auto : tables compétences expérience
@@ -311,6 +336,124 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id = $_POST['social_id'] ?? 0;
         $db->query("DELETE FROM social_links WHERE id = ?", [$id]);
         $message = "Lien social supprimé !";
+        $messageType = 'success';
+    }
+
+    // Ajouter un article
+    if ($action === 'add_post') {
+        $title = trim($_POST['title'] ?? '');
+        $slugInput = trim($_POST['slug'] ?? '');
+        $slug = $slugInput !== '' ? generateSlug($slugInput) : generateSlug($title);
+        $excerpt = trim($_POST['excerpt'] ?? '');
+        $content = trim($_POST['content'] ?? '');
+        $image = trim($_POST['image'] ?? '');
+        $published = isset($_POST['published']) ? 1 : 0;
+        $published_at = trim($_POST['published_at'] ?? '');
+        $published_at = $published_at !== '' ? $published_at : date('Y-m-d H:i:s');
+
+        try {
+            $db->query(
+                "INSERT INTO posts (title, slug, excerpt, content, image, published, published_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                [$title, $slug, $excerpt, $content, $image, $published, $published_at]
+            );
+            $message = "Article ajouté avec succès !";
+            $messageType = 'success';
+        } catch (Exception $e) {
+            $message = "Erreur: " . $e->getMessage();
+            $messageType = 'error';
+        }
+    }
+
+    // Modifier un article
+    if ($action === 'edit_post') {
+        $id = (int)($_POST['post_id'] ?? 0);
+        $title = trim($_POST['title'] ?? '');
+        $slugInput = trim($_POST['slug'] ?? '');
+        $slug = $slugInput !== '' ? generateSlug($slugInput) : generateSlug($title);
+        $excerpt = trim($_POST['excerpt'] ?? '');
+        $content = trim($_POST['content'] ?? '');
+        $image = trim($_POST['image'] ?? '');
+        $published = isset($_POST['published']) ? 1 : 0;
+        $published_at = trim($_POST['published_at'] ?? '');
+        $published_at = $published_at !== '' ? $published_at : date('Y-m-d H:i:s');
+
+        try {
+            $db->query(
+                "UPDATE posts SET title = ?, slug = ?, excerpt = ?, content = ?, image = ?, published = ?, published_at = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+                [$title, $slug, $excerpt, $content, $image, $published, $published_at, $id]
+            );
+            $message = "Article modifié avec succès !";
+            $messageType = 'success';
+        } catch (Exception $e) {
+            $message = "Erreur: " . $e->getMessage();
+            $messageType = 'error';
+        }
+    }
+
+    // Supprimer un article
+    if ($action === 'delete_post') {
+        $id = (int)($_POST['post_id'] ?? 0);
+        $db->query("DELETE FROM posts WHERE id = ?", [$id]);
+        $message = "Article supprimé !";
+        $messageType = 'success';
+    }
+
+    // Ajouter un document de veille manuel
+    if ($action === 'add_veille_document') {
+        $title = trim($_POST['title'] ?? '');
+        $link = trim($_POST['link'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $source = trim($_POST['source'] ?? '');
+        $category = trim($_POST['category'] ?? '');
+        $published_at = trim($_POST['published_at'] ?? '');
+        $published_at = $published_at !== '' ? $published_at : date('Y-m-d H:i:s');
+        $is_active = isset($_POST['is_active']) ? 1 : 0;
+        $order_index = (int)($_POST['order_index'] ?? 0);
+
+        try {
+            $db->query(
+                "INSERT INTO veille_documents (title, link, description, source, category, published_at, is_active, order_index) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                [$title, $link, $description, $source, $category, $published_at, $is_active, $order_index]
+            );
+            $message = "Document de veille ajouté !";
+            $messageType = 'success';
+        } catch (Exception $e) {
+            $message = "Erreur: " . $e->getMessage();
+            $messageType = 'error';
+        }
+    }
+
+    // Modifier un document de veille manuel
+    if ($action === 'edit_veille_document') {
+        $id = (int)($_POST['document_id'] ?? 0);
+        $title = trim($_POST['title'] ?? '');
+        $link = trim($_POST['link'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $source = trim($_POST['source'] ?? '');
+        $category = trim($_POST['category'] ?? '');
+        $published_at = trim($_POST['published_at'] ?? '');
+        $published_at = $published_at !== '' ? $published_at : date('Y-m-d H:i:s');
+        $is_active = isset($_POST['is_active']) ? 1 : 0;
+        $order_index = (int)($_POST['order_index'] ?? 0);
+
+        try {
+            $db->query(
+                "UPDATE veille_documents SET title = ?, link = ?, description = ?, source = ?, category = ?, published_at = ?, is_active = ?, order_index = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+                [$title, $link, $description, $source, $category, $published_at, $is_active, $order_index, $id]
+            );
+            $message = "Document de veille modifié !";
+            $messageType = 'success';
+        } catch (Exception $e) {
+            $message = "Erreur: " . $e->getMessage();
+            $messageType = 'error';
+        }
+    }
+
+    // Supprimer un document de veille manuel
+    if ($action === 'delete_veille_document') {
+        $id = (int)($_POST['document_id'] ?? 0);
+        $db->query("DELETE FROM veille_documents WHERE id = ?", [$id]);
+        $message = "Document de veille supprimé !";
         $messageType = 'success';
     }
 
@@ -621,6 +764,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Récupérer les données
 $profile = $db->fetch("SELECT * FROM profile LIMIT 1");
 $projects = $db->fetchAll("SELECT * FROM projects ORDER BY order_index, id DESC");
+$posts = $db->fetchAll("SELECT * FROM posts ORDER BY published_at DESC, id DESC");
+$veilleDocuments = $db->fetchAll("SELECT * FROM veille_documents ORDER BY order_index, published_at DESC, id DESC");
 $socials = $db->fetchAll("SELECT * FROM social_links ORDER BY order_index");
 $experiences = $db->fetchAll("SELECT * FROM experiences ORDER BY order_index");
 $skills = $db->fetchAll("SELECT * FROM skills ORDER BY category, order_index");
@@ -863,6 +1008,7 @@ $subCompetences = $db->fetchAll("SELECT sc.*, cb.name as block_name FROM sub_com
             <div class="tab" onclick="showSection('experiences')"><i class="fas fa-briefcase"></i> Expériences</div>
             <div class="tab" onclick="showSection('skills')"><i class="fas fa-code"></i> Compétences</div>
             <div class="tab" onclick="showSection('projects')"><i class="fas fa-folder"></i> Projets</div>
+            <div class="tab" onclick="showSection('blog')"><i class="fas fa-newspaper"></i> Veille & Articles</div>
             <div class="tab" onclick="showSection('tools')"><i class="fas fa-tools"></i> Tools</div>
             <div class="tab" onclick="showSection('competences')"><i class="fas fa-graduation-cap"></i> Compétences BTS</div>
             <div class="tab" onclick="showSection('socials')"><i class="fas fa-share-alt"></i> Réseaux Sociaux</div>
@@ -1157,6 +1303,157 @@ $subCompetences = $db->fetchAll("SELECT sc.*, cb.name as block_name FROM sub_com
             </div>
         </div>
         
+        <!-- Section Blog / Veille -->
+        <div id="blog" class="section">
+            <h2><i class="fas fa-newspaper"></i> Veille & Articles</h2>
+
+            <h3 style="color:#fb923c;margin-bottom:15px;"><i class="fas fa-pen"></i> Articles (rédaction manuelle)</h3>
+            <div class="grid">
+                <div class="card">
+                    <h3><i class="fas fa-plus"></i> Ajouter un article</h3>
+                    <form method="POST">
+                        <input type="hidden" name="action" value="add_post">
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+
+                        <label>Titre *</label>
+                        <input type="text" name="title" required placeholder="Ex: Moderniser un SI legacy sans tout casser">
+
+                        <label>Slug (optionnel)</label>
+                        <input type="text" name="slug" placeholder="auto si vide">
+
+                        <label>Extrait *</label>
+                        <textarea name="excerpt" rows="2" required placeholder="Résumé court affiché dans la carte"></textarea>
+
+                        <label>Contenu *</label>
+                        <textarea name="content" rows="8" required placeholder="Rédigez votre article ici..."></textarea>
+
+                        <label>Image (optionnel)</label>
+                        <input type="text" name="image" placeholder="nom-image.jpg">
+                        <p class="help-text">Placez vos images dans: assets/images/posts/</p>
+
+                        <label>Date de publication</label>
+                        <input type="datetime-local" name="published_at">
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" name="published" id="post_published" checked>
+                            <label for="post_published">Publier immédiatement</label>
+                        </div>
+
+                        <button type="submit" class="btn-primary"><i class="fas fa-plus"></i> Ajouter</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-list"></i> Articles existants (<?= count($posts) ?>)</h3>
+                    <?php if (empty($posts)): ?>
+                    <p style="color: #6c6c7c;">Aucun article pour le moment.</p>
+                    <?php else: ?>
+                    <?php foreach ($posts as $post): ?>
+                    <div class="project-item">
+                        <div class="project-info">
+                            <h4>
+                                <?= htmlspecialchars($post['title']) ?>
+                                <?php if ((int)$post['published'] === 1): ?>
+                                <span style="color:#22c55e;">● Publié</span>
+                                <?php else: ?>
+                                <span style="color:#eab308;">● Brouillon</span>
+                                <?php endif; ?>
+                            </h4>
+                            <p><?= htmlspecialchars($post['slug']) ?></p>
+                            <small style="color:#6c6c7c;"><?= htmlspecialchars(substr((string)$post['excerpt'], 0, 90)) ?><?= strlen((string)$post['excerpt']) > 90 ? '...' : '' ?></small>
+                        </div>
+                        <div style="display:flex; gap:8px;">
+                            <button type="button" class="btn-edit" onclick='editPost(<?= json_encode($post) ?>)'>
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <form method="POST" style="display:inline;" onsubmit="return confirm('Supprimer cet article ?')">
+                                <input type="hidden" name="action" value="delete_post">
+                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                <input type="hidden" name="post_id" value="<?= $post['id'] ?>">
+                                <button type="submit" class="btn-danger"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <h3 style="color:#fb923c;margin:30px 0 15px;"><i class="fas fa-rss"></i> Documents de veille (ajout manuel)</h3>
+            <div class="grid">
+                <div class="card">
+                    <h3><i class="fas fa-plus"></i> Ajouter un document de veille</h3>
+                    <form method="POST">
+                        <input type="hidden" name="action" value="add_veille_document">
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+
+                        <label>Titre *</label>
+                        <input type="text" name="title" required placeholder="Ex: Livre blanc IBM Z 2026">
+
+                        <label>Lien du document *</label>
+                        <input type="url" name="link" required placeholder="https://... ou /uploads/veille/doc.pdf">
+
+                        <label>Description</label>
+                        <textarea name="description" rows="3" placeholder="Résumé du document de veille"></textarea>
+
+                        <label>Source</label>
+                        <input type="text" name="source" placeholder="Ex: IBM, Gartner, Doc interne...">
+
+                        <label>Catégorie</label>
+                        <input type="text" name="category" placeholder="Ex: Mainframe, API, Sécurité">
+
+                        <label>Date</label>
+                        <input type="datetime-local" name="published_at">
+
+                        <label>Ordre d'affichage</label>
+                        <input type="number" name="order_index" min="0" value="0">
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" name="is_active" id="veille_active" checked>
+                            <label for="veille_active">Actif (visible sur le site)</label>
+                        </div>
+
+                        <button type="submit" class="btn-primary"><i class="fas fa-plus"></i> Ajouter</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-list"></i> Documents existants (<?= count($veilleDocuments) ?>)</h3>
+                    <?php if (empty($veilleDocuments)): ?>
+                    <p style="color: #6c6c7c;">Aucun document manuel pour le moment.</p>
+                    <?php else: ?>
+                    <?php foreach ($veilleDocuments as $doc): ?>
+                    <div class="project-item">
+                        <div class="project-info">
+                            <h4>
+                                <?= htmlspecialchars($doc['title']) ?>
+                                <?php if ((int)$doc['is_active'] === 1): ?>
+                                <span style="color:#22c55e;">● Actif</span>
+                                <?php else: ?>
+                                <span style="color:#ef4444;">● Inactif</span>
+                                <?php endif; ?>
+                            </h4>
+                            <p><?= htmlspecialchars($doc['source'] ?: 'Source non renseignée') ?> — <?= htmlspecialchars($doc['category'] ?: 'Catégorie non renseignée') ?></p>
+                            <small style="color:#6c6c7c;"><?= htmlspecialchars($doc['link']) ?></small>
+                        </div>
+                        <div style="display:flex; gap:8px;">
+                            <button type="button" class="btn-edit" onclick='editVeilleDocument(<?= json_encode($doc) ?>)'>
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <form method="POST" style="display:inline;" onsubmit="return confirm('Supprimer ce document ?')">
+                                <input type="hidden" name="action" value="delete_veille_document">
+                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                <input type="hidden" name="document_id" value="<?= $doc['id'] ?>">
+                                <button type="submit" class="btn-danger"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+
         <!-- Section Tools -->
         <div id="tools" class="section">
             <h2><i class="fas fa-tools"></i> Tools (Outils)</h2>
@@ -1411,6 +1708,95 @@ $subCompetences = $db->fetchAll("SELECT sc.*, cb.name as block_name FROM sub_com
                     <?php endforeach; ?>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal Edition Article -->
+    <div id="editPostModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Modifier l'article</h3>
+                <button type="button" class="modal-close" onclick="closePostModal()">&times;</button>
+            </div>
+            <form method="POST">
+                <input type="hidden" name="action" value="edit_post">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                <input type="hidden" name="post_id" id="edit_post_id">
+
+                <label>Titre *</label>
+                <input type="text" name="title" id="edit_post_title" required>
+
+                <label>Slug</label>
+                <input type="text" name="slug" id="edit_post_slug">
+
+                <label>Extrait *</label>
+                <textarea name="excerpt" id="edit_post_excerpt" rows="2" required></textarea>
+
+                <label>Contenu *</label>
+                <textarea name="content" id="edit_post_content" rows="8" required></textarea>
+
+                <label>Image (optionnel)</label>
+                <input type="text" name="image" id="edit_post_image">
+
+                <label>Date de publication</label>
+                <input type="datetime-local" name="published_at" id="edit_post_published_at">
+
+                <div class="checkbox-group">
+                    <input type="checkbox" name="published" id="edit_post_published">
+                    <label for="edit_post_published">Publié</label>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Enregistrer</button>
+                    <button type="button" class="btn-secondary" onclick="closePostModal()">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Edition Document Veille -->
+    <div id="editVeilleDocumentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Modifier le document de veille</h3>
+                <button type="button" class="modal-close" onclick="closeVeilleDocumentModal()">&times;</button>
+            </div>
+            <form method="POST">
+                <input type="hidden" name="action" value="edit_veille_document">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                <input type="hidden" name="document_id" id="edit_doc_id">
+
+                <label>Titre *</label>
+                <input type="text" name="title" id="edit_doc_title" required>
+
+                <label>Lien *</label>
+                <input type="url" name="link" id="edit_doc_link" required>
+
+                <label>Description</label>
+                <textarea name="description" id="edit_doc_description" rows="3"></textarea>
+
+                <label>Source</label>
+                <input type="text" name="source" id="edit_doc_source">
+
+                <label>Catégorie</label>
+                <input type="text" name="category" id="edit_doc_category">
+
+                <label>Date</label>
+                <input type="datetime-local" name="published_at" id="edit_doc_published_at">
+
+                <label>Ordre d'affichage</label>
+                <input type="number" name="order_index" id="edit_doc_order" min="0" value="0">
+
+                <div class="checkbox-group">
+                    <input type="checkbox" name="is_active" id="edit_doc_active">
+                    <label for="edit_doc_active">Actif</label>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Enregistrer</button>
+                    <button type="button" class="btn-secondary" onclick="closeVeilleDocumentModal()">Annuler</button>
+                </div>
+            </form>
         </div>
     </div>
     
@@ -1818,6 +2204,45 @@ $subCompetences = $db->fetchAll("SELECT sc.*, cb.name as block_name FROM sub_com
             // Afficher la section sélectionnée
             document.getElementById(id).classList.add('active');
             event.target.classList.add('active');
+        }
+
+        function toDateTimeLocalValue(value) {
+            if (!value) return '';
+            return String(value).replace(' ', 'T').slice(0, 16);
+        }
+
+        // ====== BLOG / VEILLE ======
+        function editPost(post) {
+            document.getElementById('edit_post_id').value = post.id;
+            document.getElementById('edit_post_title').value = post.title || '';
+            document.getElementById('edit_post_slug').value = post.slug || '';
+            document.getElementById('edit_post_excerpt').value = post.excerpt || '';
+            document.getElementById('edit_post_content').value = post.content || '';
+            document.getElementById('edit_post_image').value = post.image || '';
+            document.getElementById('edit_post_published_at').value = toDateTimeLocalValue(post.published_at);
+            document.getElementById('edit_post_published').checked = Number(post.published) === 1;
+            document.getElementById('editPostModal').classList.add('active');
+        }
+
+        function closePostModal() {
+            document.getElementById('editPostModal').classList.remove('active');
+        }
+
+        function editVeilleDocument(doc) {
+            document.getElementById('edit_doc_id').value = doc.id;
+            document.getElementById('edit_doc_title').value = doc.title || '';
+            document.getElementById('edit_doc_link').value = doc.link || '';
+            document.getElementById('edit_doc_description').value = doc.description || '';
+            document.getElementById('edit_doc_source').value = doc.source || '';
+            document.getElementById('edit_doc_category').value = doc.category || '';
+            document.getElementById('edit_doc_published_at').value = toDateTimeLocalValue(doc.published_at);
+            document.getElementById('edit_doc_order').value = doc.order_index || 0;
+            document.getElementById('edit_doc_active').checked = Number(doc.is_active) === 1;
+            document.getElementById('editVeilleDocumentModal').classList.add('active');
+        }
+
+        function closeVeilleDocumentModal() {
+            document.getElementById('editVeilleDocumentModal').classList.remove('active');
         }
         
         // ====== PROJETS ======

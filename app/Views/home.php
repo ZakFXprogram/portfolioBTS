@@ -16,7 +16,7 @@
             
             <div class="hero-side">
                 <div class="hero-avatar">
-                    <img src="<?= ASSETS_PATH ?>/images/avatar.jpg" alt="<?= htmlspecialchars($profile['full_name'] ?? 'Avatar') ?>" onerror="this.src='https://via.placeholder.com/300x350/1a1a2e/eee?text=Avatar'">
+                    <img src="<?= ASSETS_PATH ?>/images/avatar.png" alt="<?= htmlspecialchars($profile['full_name'] ?? 'Avatar') ?>" onerror="this.src='https://via.placeholder.com/300x350/1a1a2e/eee?text=Avatar'">
                 </div>
                 
                 <div class="hero-clock">
@@ -120,7 +120,7 @@ window.projectsData = {
         technologies: <?= json_encode($project['technologies'] ? array_map('trim', explode(',', $project['technologies'])) : []) ?>,
         url: <?= json_encode($project['url']) ?>,
         github_url: <?= json_encode($project['github_url']) ?>,
-        slug: <?= json_encode($project['slug']) ?>,
+        slug: <?= json_encode(trim((string)($project['slug'] ?? ''))) ?>,
         competence_blocks: <?= json_encode($project['competence_blocks'] ?? []) ?>
     },
     <?php endforeach; ?>

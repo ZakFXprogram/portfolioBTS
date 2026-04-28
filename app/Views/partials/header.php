@@ -34,19 +34,61 @@
                 </a>
                 
                 <ul class="nav-links">
-                    <li><a href="<?= SITE_URL ?>" class="<?= ($pageTitle ?? '') === 'Accueil' ? 'active' : '' ?>">Home</a></li>
-                    <li><a href="<?= SITE_URL ?>/blog" class="<?= ($pageTitle ?? '') === 'Blog' ? 'active' : '' ?>">Blog</a></li>
-                    <li><a href="<?= SITE_URL ?>/projects" class="<?= ($pageTitle ?? '') === 'Projets' ? 'active' : '' ?>">Projects</a></li>
-                    <li><a href="<?= SITE_URL ?>/resume" class="<?= ($pageTitle ?? '') === 'CV' ? 'active' : '' ?>">Resume</a></li>
-                    <li><a href="<?= SITE_URL ?>/tools" class="<?= ($pageTitle ?? '') === 'Outils' ? 'active' : '' ?>">Tools</a></li>
+                    <li><a href="<?= SITE_URL ?>" class="<?= ($pageTitle ?? '') === 'Accueil' ? 'active' : '' ?>">Accueil</a></li>
+                    <li><a href="<?= SITE_URL ?>/blog" class="<?= ($pageTitle ?? '') === 'Blog' ? 'active' : '' ?>">Veille</a></li>
+                    <li><a href="<?= SITE_URL ?>/projects" class="<?= ($pageTitle ?? '') === 'Projets' ? 'active' : '' ?>">Projets</a></li>
+                    <li><a href="<?= SITE_URL ?>/resume" class="<?= ($pageTitle ?? '') === 'Parcours' ? 'active' : '' ?>">Parcours</a></li>
+                    <li><a href="<?= SITE_URL ?>/tools" class="<?= ($pageTitle ?? '') === 'Outils' ? 'active' : '' ?>">Outils</a></li>
                 </ul>
 
+                <?php
+                $githubLink = null;
+                $gitlabLink = null;
+                $otherSocialLinks = [];
+
+                foreach ($socialLinks as $social) {
+                    $name = strtolower((string)($social['name'] ?? ''));
+                    $url = strtolower((string)($social['url'] ?? ''));
+
+                    if (strpos($name, 'github') !== false || strpos($url, 'github.com') !== false) {
+                        $githubLink = $social;
+                        continue;
+                    }
+
+                    if (strpos($name, 'gitlab') !== false || strpos($url, 'gitlab.com') !== false) {
+                        $gitlabLink = $social;
+                        continue;
+                    }
+
+                    $otherSocialLinks[] = $social;
+                }
+
+                $gitlabUrl = trim((string)($gitlabLink['url'] ?? 'https://gitlab.com/'));
+                $githubUrl = trim((string)($githubLink['url'] ?? 'https://github.com/'));
+                ?>
+
                 <div class="nav-social">
-                    <?php foreach ($socialLinks as $social): ?>
+                    <?php foreach ($otherSocialLinks as $social): ?>
                     <a href="<?= htmlspecialchars($social['url']) ?>" target="_blank" rel="noopener noreferrer" title="<?= htmlspecialchars($social['name']) ?>">
                         <i class="<?= htmlspecialchars($social['icon']) ?>"></i>
                     </a>
                     <?php endforeach; ?>
+
+                    <div class="git-switcher">
+                        <button type="button" class="git-switcher-trigger" aria-label="Liens Git">
+                            <i class="fa-brands fa-git-alt"></i>
+                        </button>
+                        <div class="git-switcher-menu" role="menu" aria-label="Plateformes Git">
+                            <a href="<?= htmlspecialchars($gitlabUrl) ?>" target="_blank" rel="noopener noreferrer" class="git-switcher-item" role="menuitem">
+                                <i class="fa-brands fa-gitlab"></i>
+                                <span>GitLab</span>
+                            </a>
+                            <a href="<?= htmlspecialchars($githubUrl) ?>" target="_blank" rel="noopener noreferrer" class="git-switcher-item" role="menuitem">
+                                <i class="fa-brands fa-github"></i>
+                                <span>GitHub</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
                 <button class="mobile-menu-btn" aria-label="Menu">
@@ -59,11 +101,11 @@
     <!-- Mobile Menu -->
     <div class="mobile-menu">
         <ul class="mobile-nav-links">
-            <li><a href="<?= SITE_URL ?>">Home</a></li>
-            <li><a href="<?= SITE_URL ?>/blog">Blog</a></li>
-            <li><a href="<?= SITE_URL ?>/projects">Projects</a></li>
-            <li><a href="<?= SITE_URL ?>/resume">Resume</a></li>
-            <li><a href="<?= SITE_URL ?>/tools">Tools</a></li>
+            <li><a href="<?= SITE_URL ?>">Accueil</a></li>
+            <li><a href="<?= SITE_URL ?>/blog">Veille</a></li>
+            <li><a href="<?= SITE_URL ?>/projects">Projets</a></li>
+            <li><a href="<?= SITE_URL ?>/resume">Parcours</a></li>
+            <li><a href="<?= SITE_URL ?>/tools">Outils</a></li>
         </ul>
         <div class="mobile-social">
             <?php foreach ($socialLinks as $social): ?>

@@ -28,7 +28,13 @@ class BlogController extends Controller
         $posts = $this->db->fetchAll("SELECT * FROM posts WHERE published = 1 ORDER BY published_at DESC");
 
         // Récupérer les articles de veille depuis les flux RSS
-        $veilleArticles = $this->fetchRssFeeds();
+        $rssArticles = $this->fetchRssFeeds();
+        $manualVeilleArticles = $this->fetchManualVeilleDocuments();
+        $veilleArticles = array_merge($manualVeilleArticles, $rssArticles);
+
+        usort($veilleArticles, function($a, $b) {
+            return strtotime($b['date']) - strtotime($a['date']);
+        });
 
         $this->view('blog/index', [
             'pageTitle' => 'Blog',
@@ -219,6 +225,30 @@ class BlogController extends Controller
                 ];
                 $count++;
             }
+        }
+
+        return $articles;
+    }
+
+    /**
+     * Récupère les documents de veille ajoutés manuellement depuis l'admin
+     */
+    private function fetchManualVeilleDocuments()
+    {
+        $rows = $this->db->fetchAll(
+            "SELECT * FROM veille_documents WHERE is_active = 1 ORDER BY order_index, published_at DESC, id DESC"
+        );
+
+        $articles = [];
+        foreach ($rows as $row) {
+            $articles[] = [
+                'title' => $row['title'],
+                'link' => $row['link'],
+                'description' => $row['description'] ?: 'Document de veille ajouté manuellement.',
+                'date' => $row['published_at'] ?: $row['created_at'],
+                'source' => $row['source'] ?: 'Ajout manuel',
+                'category' => $row['category'] ?: 'Veille manuelle'
+            ];
         }
 
         return $articles;

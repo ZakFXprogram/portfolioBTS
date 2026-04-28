@@ -167,6 +167,23 @@ class Database
             )
         ");
 
+        // Table des documents de veille ajoutés manuellement
+        $this->pdo->exec("
+            CREATE TABLE IF NOT EXISTS veille_documents (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title VARCHAR(255) NOT NULL,
+                link VARCHAR(500) NOT NULL,
+                description TEXT,
+                source VARCHAR(255),
+                category VARCHAR(255),
+                published_at DATETIME,
+                is_active INTEGER DEFAULT 1,
+                order_index INTEGER DEFAULT 0,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        ");
+
         // Table des outils/uses
         $this->pdo->exec("
             CREATE TABLE IF NOT EXISTS tools (

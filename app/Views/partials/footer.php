@@ -26,11 +26,11 @@
                 <p class="footer-copyright">© <?= date('Y') ?> <?= htmlspecialchars($profile['full_name'] ?? SITE_NAME) ?></p>
                 
                 <ul class="footer-links">
-                    <li><a href="<?= SITE_URL ?>">Home</a></li>
-                    <li><a href="<?= SITE_URL ?>/blog">Blog</a></li>
-                    <li><a href="<?= SITE_URL ?>/projects">Projects</a></li>
-                    <li><a href="<?= SITE_URL ?>/resume">Resume</a></li>
-                    <li><a href="<?= SITE_URL ?>/tools">Tools</a></li>
+                    <li><a href="<?= SITE_URL ?>">Accueil</a></li>
+                    <li><a href="<?= SITE_URL ?>/blog">Veille</a></li>
+                    <li><a href="<?= SITE_URL ?>/projects">Projets</a></li>
+                    <li><a href="<?= SITE_URL ?>/resume">Parcours</a></li>
+                    <li><a href="<?= SITE_URL ?>/tools">Outils</a></li>
                 </ul>
 
                 <div class="footer-social">

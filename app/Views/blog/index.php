@@ -61,7 +61,7 @@
 
         <div class="veille-info">
             <i class="fas fa-info-circle"></i>
-            <p>Cette veille est alimentée automatiquement par des flux RSS de sources reconnues : IBM Z Blog, Planet Mainframe et IBM Developer.</p>
+            <p>Cette veille est alimentée automatiquement par des flux RSS (IBM Z Blog, Planet Mainframe, IBM Developer) et par vos documents ajoutés manuellement dans l'administration.</p>
         </div>
     </div>
 </section>

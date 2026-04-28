@@ -37,7 +37,7 @@ class ResumeController extends Controller
         }
 
         $this->view('resume', [
-            'pageTitle' => 'CV',
+            'pageTitle' => 'Parcours',
             'profile' => $profile,
             'experiences' => $experiences,
             'skillsByCategory' => $skillsByCategory

@@ -34,7 +34,8 @@
                             <p class="experience-position"><?= htmlspecialchars($exp['position']) ?></p>
                         </div>
                         <div class="experience-meta">
-                            <span class="experience-type"><?= htmlspecialchars($exp['type']) ?></span>
+                            <?php $typeLabels = ['Internship' => 'Stage', 'Full-time' => 'CDI', 'Part-time' => 'Temps partiel', 'Freelance' => 'Freelance', 'Apprenticeship' => 'Alternance']; ?>
+                            <span class="experience-type"><?= htmlspecialchars($typeLabels[$exp['type']] ?? $exp['type']) ?></span>
                             <span class="experience-dates">
                                 <?= date('M Y', strtotime($exp['start_date'])) ?> - 
                                 <?= $exp['is_current'] ? 'Present' : date('M Y', strtotime($exp['end_date'])) ?>

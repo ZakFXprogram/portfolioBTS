@@ -286,8 +286,9 @@ function openProjectModal(projectId) {
             blocksHTML += `<span class="competence-block-badge" style="--block-color: ${color}">${icon}${block.name}</span>`;
         });
         blocksHTML += '</div>';
-        if (project.slug) {
-            blocksHTML += `<a href="/project/${project.slug}" class="btn-voir-competences">
+        const normalizedSlug = typeof project.slug === 'string' ? project.slug.trim() : '';
+        if (normalizedSlug) {
+            blocksHTML += `<a href="/project/${encodeURIComponent(normalizedSlug)}" class="btn-voir-competences">
                 <i class="fas fa-graduation-cap"></i> Voir les compétences
             </a>`;
         }

@@ -92,7 +92,7 @@ window.projectsData = {
         technologies: <?= json_encode($project['technologies'] ? array_map('trim', explode(',', $project['technologies'])) : []) ?>,
         url: <?= json_encode($project['url']) ?>,
         github_url: <?= json_encode($project['github_url']) ?>,
-        slug: <?= json_encode($project['slug']) ?>,
+        slug: <?= json_encode(trim((string)($project['slug'] ?? ''))) ?>,
         competence_blocks: <?= json_encode($project['competence_blocks'] ?? []) ?>
     },
     <?php endforeach; ?>

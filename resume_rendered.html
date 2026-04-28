@@ -1,0 +1,433 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="assets-path" content="/assets">
+    <title>Parcours - Mon Portfolio</title>
+    <meta name="description" content="Étudiant en BTS SIO SLAM, passionné par le développement logiciel et les systèmes d’information.
+
+Je conçois et développe des applications orientées données dans différent langage, avec une forte attention portée à la logique métier, à la gestion de bases de données et à la structuration du code.
+
+J’ai travaillé sur des projets applicatifs intégrant des bases de données relationnelles, des jointures complexes et des interfaces utilisateur, notamment dans des contextes de gestion (clubs, matchs, catégories, etc.).
+
+Curieux et en constante progression, je m’intéresse également à Python, à l’analyse de données, aux bases de l’IA/ML, ainsi qu’aux applications numériques dans la finance et les systèmes décisionnels.
+
+Mon objectif est de développer des solutions fiables, utiles et bien structurées, tout en renforçant mes compétences techniques et analytiques.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/images/favicon.png">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="http://localhost:8000" class="logo">
+                    <span class="logo-prefix">~</span>
+                    <span class="logo-name">E. Zakaria</span>
+                    <span class="logo-cursor">$</span>
+                    <span class="cursor-blink">▌</span>
+                </a>
+                
+                <ul class="nav-links">
+                    <li><a href="http://localhost:8000" class="">Accueil</a></li>
+                    <li><a href="http://localhost:8000/blog" class="">Blog</a></li>
+                    <li><a href="http://localhost:8000/projects" class="">Projets</a></li>
+                    <li><a href="http://localhost:8000/resume" class="active">Parcours</a></li>
+                    <li><a href="http://localhost:8000/tools" class="">Outils</a></li>
+                </ul>
+
+                <div class="nav-social">
+                                        <a href="https://github.com/" target="_blank" rel="noopener noreferrer" title="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                                        <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" title="LinkedIn">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                                    </div>
+
+                <button class="mobile-menu-btn" aria-label="Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        <ul class="mobile-nav-links">
+            <li><a href="http://localhost:8000">Accueil</a></li>
+            <li><a href="http://localhost:8000/blog">Blog</a></li>
+            <li><a href="http://localhost:8000/projects">Projets</a></li>
+            <li><a href="http://localhost:8000/resume">Parcours</a></li>
+            <li><a href="http://localhost:8000/tools">Outils</a></li>
+        </ul>
+        <div class="mobile-social">
+                        <a href="https://github.com/" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-github"></i>
+            </a>
+                        <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-linkedin"></i>
+            </a>
+                    </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main">
+
+<section class="page-header resume-header">
+    <div class="container">
+        <div class="resume-header-content">
+            <h1 class="page-title">Étudiant développeur Full-Stack</h1>
+            <a href="http://localhost:8000/resume/download" class="btn btn-primary btn-download">
+                <i class="fas fa-download"></i> Download PDF
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="section resume-section">
+    <div class="container">
+        <!-- Summary -->
+        <div class="resume-block">
+            <h2 class="resume-block-title">Résumé</h2>
+            <p class="resume-summary">
+                Étudiant en BTS SIO SLAM, passionné par le développement logiciel et les systèmes d’information.<br />
+<br />
+Je conçois et développe des applications orientées données dans différent langage, avec une forte attention portée à la logique métier, à la gestion de bases de données et à la structuration du code.<br />
+<br />
+J’ai travaillé sur des projets applicatifs intégrant des bases de données relationnelles, des jointures complexes et des interfaces utilisateur, notamment dans des contextes de gestion (clubs, matchs, catégories, etc.).<br />
+<br />
+Curieux et en constante progression, je m’intéresse également à Python, à l’analyse de données, aux bases de l’IA/ML, ainsi qu’aux applications numériques dans la finance et les systèmes décisionnels.<br />
+<br />
+Mon objectif est de développer des solutions fiables, utiles et bien structurées, tout en renforçant mes compétences techniques et analytiques.            </p>
+        </div>
+
+        <!-- Experience -->
+        <div class="resume-block">
+            <h2 class="resume-block-title">Experience</h2>
+            
+            <div class="experiences-list">
+                                <article class="experience-item">
+                    <div class="experience-header">
+                        <div class="experience-info">
+                            <h3 class="experience-company">La Banque Postale</h3>
+                            <p class="experience-position">Junior Full-Stack Software Engineer</p>
+                        </div>
+                        <div class="experience-meta">
+                            <span class="experience-type">Internship</span>
+                            <span class="experience-dates">
+                                Jan 2026 - 
+                                Mar 2026                            </span>
+                        </div>
+                    </div>
+                    
+                                        <div class="experience-content">
+                                                <p class="experience-description">Lors de ce stage, j’ai participé au développement et à la maintenance d’applications sur environnement mainframe IBM z/OS. J’ai contribué à l’évolution fonctionnelle de modules applicatifs, notamment dans le domaine de la tarification de services financiers.
+
+Mes missions incluaient la conception et l’automatisation de traitements batch à l’aide de scripts JCL, ainsi que la manipulation et l’exploitation de données en base DB2 via des requêtes SQL. J’ai également pris part à la mise en place d’un système automatisé de détection et de surveillance des anomalies, avec un mécanisme d’alerte par email afin d’améliorer la réactivité opérationnelle.
+
+En parallèle, j’ai rédigé des spécifications techniques et élaboré des plans de tests unitaires, contribuant ainsi à la qualité et à la fiabilité des développements réalisés.
+
+Ce stage m’a permis de développer mes compétences en programmation, en gestion de données et en méthodologies de développement, tout en évoluant dans un environnement technique exigeant.</p>
+                                                
+                                                <ul class="experience-responsibilities">
+                                                                                    <li>Développement COBOL sur mainframe IBM z/OS</li>
+                                                                                                                <li>Évolution fonctionnelle du module de tarification de l&#039;Option Internationale</li>
+                                                                                                                <li>(cartes Visa Premier/Platinum/Infinite)</li>
+                                                                                                                <li>Écriture de scripts JCL d’automatisation de création de requête SQL en base DB2</li>
+                                                                                                                <li>Conception d&#039;un système automatisé de surveillance d&#039;anomalies avec alerting</li>
+                                                                                                                <li>par email</li>
+                                                                                                                <li>Rédaction de spécifications techniques et de plans de tests unitaires</li>
+                                                                                </ul>
+                                            </div>
+                                        
+                                        <button type="button" class="btn btn-competences-exp" onclick="openExpCompetences(4)">
+                        <i class="fas fa-graduation-cap"></i> Voir les compétences
+                    </button>
+                                    </article>
+                                <article class="experience-item">
+                    <div class="experience-header">
+                        <div class="experience-info">
+                            <h3 class="experience-company">La Banque Postale</h3>
+                            <p class="experience-position">Junior Full-Stack Software Engineer</p>
+                        </div>
+                        <div class="experience-meta">
+                            <span class="experience-type">Internship</span>
+                            <span class="experience-dates">
+                                May 2025 - 
+                                Jun 2025                            </span>
+                        </div>
+                    </div>
+                    
+                                        <div class="experience-content">
+                                                <p class="experience-description">Participation au développement et à l’automatisation de tests logiciels, incluant tests unitaires et tests fonctionnels, afin d’assurer la qualité et la fiabilité des applications dans un environnement Agile.</p>
+                                                
+                                                <ul class="experience-responsibilities">
+                                                                                    <li>Développement de tests de non régression bout en bout en Angular/Cypress</li>
+                                                                                                                <li>Automatisation d’IHM visant à sécuriser la mise en œuvre des évolutions en production</li>
+                                                                                                                <li>Développement de tests unitaires en JAVA</li>
+                                                                                                                <li>Travail en environnement Agile avec la méthodologie Scrum</li>
+                                                                                </ul>
+                                            </div>
+                                        
+                                        <button type="button" class="btn btn-competences-exp" onclick="openExpCompetences(1)">
+                        <i class="fas fa-graduation-cap"></i> Voir les compétences
+                    </button>
+                                    </article>
+                                <article class="experience-item">
+                    <div class="experience-header">
+                        <div class="experience-info">
+                            <h3 class="experience-company">VR Expérience | Bordeaux</h3>
+                            <p class="experience-position">Junior Developer</p>
+                        </div>
+                        <div class="experience-meta">
+                            <span class="experience-type">Internship</span>
+                            <span class="experience-dates">
+                                Jan 2023 - 
+                                Oct 2024                            </span>
+                        </div>
+                    </div>
+                    
+                                        <div class="experience-content">
+                                                <p class="experience-description">Programmation en Python avec intégration de SQL pour optimiser les processus internes.
+Collaboration en équipe pour développer un algorithme de gestion de base de données.</p>
+                                                
+                                                <ul class="experience-responsibilities">
+                                                                                    <li>Écrire et maintenir le code Python pour les modules de gestion des données.</li>
+                                                                                                                                                                        <li>Assurer l’intégration avec la base de données SQL (requêtes, optimisation, transactions).</li>
+                                                                                </ul>
+                                            </div>
+                                        
+                                    </article>
+                            </div>
+        </div>
+
+        <!-- Skills -->
+                <div class="resume-block">
+            <h2 class="resume-block-title">Skills</h2>
+            
+            <div class="skills-categories">
+                                <div class="skill-category">
+                    <h3 class="skill-category-title">Backend</h3>
+                    <div class="skill-category-items">
+                                                <div class="skill-badge">
+                            <i class="fa-brands fa-java"></i>
+                            <span>Java</span>
+                        </div>
+                                                <div class="skill-badge">
+                            <i class="fab fa-android"></i>
+                            <span>Kotlin</span>
+                        </div>
+                                                <div class="skill-badge">
+                            <i class="fab fa-php"></i>
+                            <span>PHP</span>
+                        </div>
+                                                <div class="skill-badge">
+                            <i class="fab fa-python"></i>
+                            <span>Python</span>
+                        </div>
+                                            </div>
+                </div>
+                                <div class="skill-category">
+                    <h3 class="skill-category-title">Database</h3>
+                    <div class="skill-category-items">
+                                                <div class="skill-badge">
+                            <i class="fas fa-database"></i>
+                            <span>MySQL</span>
+                        </div>
+                                            </div>
+                </div>
+                                <div class="skill-category">
+                    <h3 class="skill-category-title">DevOps</h3>
+                    <div class="skill-category-items">
+                                                <div class="skill-badge">
+                            <i class="fab fa-docker"></i>
+                            <span>Docker</span>
+                        </div>
+                                            </div>
+                </div>
+                                <div class="skill-category">
+                    <h3 class="skill-category-title">Framework</h3>
+                    <div class="skill-category-items">
+                                                <div class="skill-badge">
+                            <i class="fa-brands fa-symfony"></i>
+                            <span>Symfony</span>
+                        </div>
+                                                <div class="skill-badge">
+                            <i class="fab fa-laravel"></i>
+                            <span>Laravel</span>
+                        </div>
+                                            </div>
+                </div>
+                                <div class="skill-category">
+                    <h3 class="skill-category-title">Frontend</h3>
+                    <div class="skill-category-items">
+                                                <div class="skill-badge">
+                            <i class="fa-brands fa-css3"></i>
+                            <span>CSS</span>
+                        </div>
+                                                <div class="skill-badge">
+                            <i class="fa-brands fa-html5"></i>
+                            <span>HTML</span>
+                        </div>
+                                                <div class="skill-badge">
+                            <i class="fa-brands fa-angular"></i>
+                            <span>Angular</span>
+                        </div>
+                                                <div class="skill-badge">
+                            <i class="fab fa-js"></i>
+                            <span>JavaScript</span>
+                        </div>
+                                                <div class="skill-badge">
+                            <i class="fab fa-vuejs"></i>
+                            <span>Vue.js</span>
+                        </div>
+                                            </div>
+                </div>
+                                <div class="skill-category">
+                    <h3 class="skill-category-title">Mainframe</h3>
+                    <div class="skill-category-items">
+                                                <div class="skill-badge">
+                            <i class=""></i>
+                            <span>Cobol</span>
+                        </div>
+                                                <div class="skill-badge">
+                            <i class=""></i>
+                            <span>JCL</span>
+                        </div>
+                                                <div class="skill-badge">
+                            <i class=""></i>
+                            <span>IBM Z/Os</span>
+                        </div>
+                                            </div>
+                </div>
+                            </div>
+        </div>
+            </div>
+</section>
+
+<!-- Modal Compétences Expérience -->
+<div id="expCompetencesModal" class="exp-comp-modal">
+    <div class="exp-comp-modal-content">
+        <button class="exp-comp-modal-close" onclick="closeExpCompetences()">&times;</button>
+        <h3 id="expCompTitle" class="exp-comp-modal-title"></h3>
+        <div id="expCompBody" class="exp-comp-modal-body"></div>
+    </div>
+</div>
+
+<script>
+var expCompetencesData = {"4":{"title":"La Banque Postale \u2014 Junior Full-Stack Software Engineer","blocks":[{"id":1,"name":"G\u00e9rer le patrimoine informatique","icon":"","color":"#ffffff","order_index":0},{"id":2,"name":"R\u00e9pondre aux incidents et aux demandes d\u2019assistance et d\u2019\u00e9volution","icon":"","color":"#ffffff","order_index":0},{"id":4,"name":"Travailler en mode projet","icon":"","color":"#ffffff","order_index":0},{"id":5,"name":"Mettre \u00e0 disposition des utilisateurs un service informatique","icon":"","color":"#ffffff","order_index":0},{"id":6,"name":"Organiser son d\u00e9veloppement professionnel","icon":"","color":"#ffffff","order_index":0}],"grouped":{"1":[{"sc_name":"Exploiter des r\u00e9f\u00e9rentiels, normes et standards adopt\u00e9s par le prestataire informatique","sc_justification":"D\u00e9veloppement COBOL sur mainframe IBM z\/OS = environnement norm\u00e9 et standardis\u00e9 (JCL, DB2, conventions mainframe).","block_id":1,"block_name":"G\u00e9rer le patrimoine informatique"},{"sc_name":"V\u00e9rifier les conditions de la continuit\u00e9 d\u2019un service informatique","sc_justification":"\u00c9volution du module de tarification Visa sur un SI critique = impact direct sur la continuit\u00e9 du service bancaire.","block_id":1,"block_name":"G\u00e9rer le patrimoine informatique"},{"sc_name":"G\u00e9rer des sauvegardes","sc_justification":"Probable en environnement mainframe z\/OS \u2014 \u00e0 confirmer si vous g\u00e9riez des jeux de donn\u00e9es ou sauvegardes JCL.","block_id":1,"block_name":"G\u00e9rer le patrimoine informatique"}],"2":[{"sc_name":"Traiter des demandes concernant les services r\u00e9seau et syst\u00e8me, applicatifs","sc_justification":"\u00c9volution fonctionnelle du module de tarification = traitement d'une demande d'\u00e9volution applicative concr\u00e8te.","block_id":2,"block_name":"R\u00e9pondre aux incidents et aux demandes d\u2019assistance et d\u2019\u00e9volution"},{"sc_name":"Traiter des demandes concernant les applications","sc_justification":"Conception du syst\u00e8me automatis\u00e9 de surveillance d'anomalies avec alerting = r\u00e9ponse \u00e0 un besoin de supervision applicative.","block_id":2,"block_name":"R\u00e9pondre aux incidents et aux demandes d\u2019assistance et d\u2019\u00e9volution"}],"4":[{"sc_name":"Analyser les objectifs et les modalit\u00e9s d\u2019organisation d\u2019un projet","sc_justification":"R\u00e9daction de sp\u00e9cifications techniques implique d'analyser le besoin et de planifier l'approche technique.","block_id":4,"block_name":"Travailler en mode projet"}],"5":[{"sc_name":"R\u00e9aliser les tests d\u2019int\u00e9gration et d\u2019acceptation d\u2019un service","sc_justification":"R\u00e9daction de plans de tests unitaires et \u00e9criture de scripts JCL = d\u00e9marche de validation avant mise en production.","block_id":5,"block_name":"Mettre \u00e0 disposition des utilisateurs un service informatique"},{"sc_name":"Accompagner les utilisateurs dans la mise en place d\u2019un service","sc_justification":"La r\u00e9daction de sp\u00e9cifications techniques sugg\u00e8re une communication avec des interlocuteurs m\u00e9tier \u2014 \u00e0 confirmer.","block_id":5,"block_name":"Mettre \u00e0 disposition des utilisateurs un service informatique"}],"6":[{"sc_name":"Mettre en place son environnement d\u2019apprentissage personnel","sc_justification":"Mont\u00e9e en comp\u00e9tence sur COBOL, JCL, DB2 et l'environnement mainframe IBM \u2014 technologies tr\u00e8s sp\u00e9cialis\u00e9es.","block_id":6,"block_name":"Organiser son d\u00e9veloppement professionnel"},{"sc_name":"G\u00e9rer son identit\u00e9 professionnelle","sc_justification":"Deux stages cons\u00e9cutifs dans la m\u00eame DSI bancaire = construction d'un profil professionnel coh\u00e9rent et identifiable.","block_id":6,"block_name":"Organiser son d\u00e9veloppement professionnel"}]}},"1":{"title":"La Banque Postale \u2014 Junior Full-Stack Software Engineer","blocks":[{"id":1,"name":"G\u00e9rer le patrimoine informatique","icon":"","color":"#ffffff","order_index":0},{"id":4,"name":"Travailler en mode projet","icon":"","color":"#ffffff","order_index":0},{"id":5,"name":"Mettre \u00e0 disposition des utilisateurs un service informatique","icon":"","color":"#ffffff","order_index":0},{"id":6,"name":"Organiser son d\u00e9veloppement professionnel","icon":"","color":"#ffffff","order_index":0}],"grouped":{"1":[{"sc_name":"V\u00e9rifier les conditions de la continuit\u00e9 d\u2019un service informatique","sc_justification":"Les tests de non-r\u00e9gression bout en bout ont pr\u00e9cis\u00e9ment pour but de garantir la continuit\u00e9 du service en production.","block_id":1,"block_name":"G\u00e9rer le patrimoine informatique"},{"sc_name":"V\u00e9rifier le respect des r\u00e8gles d\u2019utilisation des ressources num\u00e9riques","sc_justification":"Dans un contexte bancaire r\u00e9glement\u00e9, probable que des normes de code et de s\u00e9curit\u00e9 soient appliqu\u00e9es \u2014 \u00e0 confirmer.","block_id":1,"block_name":"G\u00e9rer le patrimoine informatique"},{"sc_name":"G\u00e9rer des sauvegardes","sc_justification":"Utilisation de git","block_id":1,"block_name":"G\u00e9rer le patrimoine informatique"}],"4":[{"sc_name":"Analyser les objectifs et les modalit\u00e9s d\u2019organisation d\u2019un projet","sc_justification":"Travail en m\u00e9thodologie Scrum \u2192 participation aux sprints, compr\u00e9hension des objectifs de chaque it\u00e9ration.","block_id":4,"block_name":"Travailler en mode projet"},{"sc_name":"Planifier les activit\u00e9s","sc_justification":"L'Agile\/Scrum implique une planification r\u00e9guli\u00e8re (sprint planning, backlog).","block_id":4,"block_name":"Travailler en mode projet"},{"sc_name":"\u00c9valuer les indicateurs de suivi d\u2019un projet et analyser les \u00e9carts","sc_justification":"Probable via les r\u00e9trospectives Scrum et le suivi du burndown chart \u2014 \u00e0 confirmer si vous y participiez activement.","block_id":4,"block_name":"Travailler en mode projet"}],"5":[{"sc_name":"R\u00e9aliser les tests d\u2019int\u00e9gration et d\u2019acceptation d\u2019un service","sc_justification":"C'est le c\u0153ur de la mission : d\u00e9veloppement de tests Cypress (E2E) et tests unitaires Java = tests d'int\u00e9gration et d'acceptation.","block_id":5,"block_name":"Mettre \u00e0 disposition des utilisateurs un service informatique"},{"sc_name":"D\u00e9ployer un service","sc_justification":"Probable dans un pipeline CI\/CD (contexte Agile) \u2014 \u00e0 confirmer si vous interveniez sur la mise en production.","block_id":5,"block_name":"Mettre \u00e0 disposition des utilisateurs un service informatique"}],"6":[{"sc_name":"Mettre en place son environnement d\u2019apprentissage personnel","sc_justification":"Apprentissage de Angular, Cypress et des pratiques Agile en contexte professionnel r\u00e9el.","block_id":6,"block_name":"Organiser son d\u00e9veloppement professionnel"},{"sc_name":"Mettre en \u0153uvre des outils et strat\u00e9gies de veille informationnelle","sc_justification":"Ma\u00eetriser un framework comme Cypress implique une veille active sur la documentation et les \u00e9volutions.","block_id":6,"block_name":"Organiser son d\u00e9veloppement professionnel"}]}}};
+
+function openExpCompetences(expId) {
+    var data = expCompetencesData[expId];
+    if (!data) return;
+    
+    document.getElementById('expCompTitle').textContent = data.title;
+    var body = document.getElementById('expCompBody');
+    var html = '';
+    
+    data.blocks.forEach(function(block) {
+        html += '<div class="sc-group">';
+        html += '<h4 class="sc-group-title">' + escapeHtml(block.name) + '</h4>';
+        var scs = data.grouped[block.id] || [];
+        if (scs.length > 0) {
+            html += '<ul class="sc-items-list">';
+            scs.forEach(function(sc) {
+                html += '<li class="sc-item-entry"><span class="sc-item-name">' + escapeHtml(sc.sc_name) + '</span>';
+                if (sc.sc_justification) {
+                    html += '<p class="sc-item-justification">' + escapeHtml(sc.sc_justification).replace(/\n/g, '<br>') + '</p>';
+                }
+                html += '</li>';
+            });
+            html += '</ul>';
+        }
+        html += '</div>';
+    });
+    
+    body.innerHTML = html;
+    document.getElementById('expCompetencesModal').classList.add('active');
+}
+
+function closeExpCompetences() {
+    document.getElementById('expCompetencesModal').classList.remove('active');
+}
+
+function escapeHtml(text) {
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+document.getElementById('expCompetencesModal').addEventListener('click', function(e) {
+    if (e.target === this) closeExpCompetences();
+});
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeExpCompetences();
+});
+</script>
+
+    </main>
+
+    <!-- Image Lightbox -->
+    <div id="imageLightbox" class="image-lightbox">
+        <button class="lightbox-close" onclick="closeLightbox()">
+            <i class="fas fa-times"></i>
+        </button>
+        <button class="lightbox-nav lightbox-prev" onclick="lightboxPrev()">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="lightbox-content">
+            <img id="lightboxImage" src="" alt="Image agrandie">
+        </div>
+        <button class="lightbox-nav lightbox-next" onclick="lightboxNext()">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        <div class="lightbox-counter">
+            <span id="lightboxCounter">1 / 1</span>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p class="footer-copyright">© 2026 E. Zakaria</p>
+                
+                <ul class="footer-links">
+                    <li><a href="http://localhost:8000">Accueil</a></li>
+                    <li><a href="http://localhost:8000/blog">Blog</a></li>
+                    <li><a href="http://localhost:8000/projects">Projets</a></li>
+                    <li><a href="http://localhost:8000/resume">Parcours</a></li>
+                    <li><a href="http://localhost:8000/tools">Outils</a></li>
+                </ul>
+
+                <div class="footer-social">
+                                        <a href="https://github.com/" target="_blank" rel="noopener noreferrer" title="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                                        <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" title="LinkedIn">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                                    </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="/assets/js/app.js"></script>
+</body>
+</html>
+
