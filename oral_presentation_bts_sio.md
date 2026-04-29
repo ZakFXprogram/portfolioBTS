@@ -30,10 +30,10 @@ Je vais maintenant vous présenter mes compétences à travers **deux projets qu
 
 ## 2. Les compétences via deux projets (≈ 6 minutes)
 
-Pour cet oral, j'ai fait le choix volontaire de me concentrer sur **deux projets complémentaires** plutôt que de survoler les sept que contient mon portfolio. Ces deux projets ont été choisis parce qu'**à eux deux, ils couvrent les six blocs de compétences du référentiel** :
+Pour cet oral, j'ai fait le choix volontaire de me concentrer sur **deux projets complémentaires** plutôt que de survoler les sept que contient mon portfolio. Ces deux projets sont les plus aboutis de ma formation, ce sont mes **deux ateliers professionnels de deuxième année (AP 3.1 et AP 3.2)**, et **à eux deux ils couvrent les six blocs de compétences du référentiel BTS SIO** :
 
-- **Projet A — AP 3.1 « M2L Site Dynamique »** : projet de deuxième année, le plus complet, à 3 développeurs sur 5 semaines.
-- **Projet B — AP 2.2 « JPO »** : projet de première année, en binôme, qui complète A sur deux compétences spécifiques que A ne valide pas (**Collecter et orienter les demandes**, et **Accompagner les utilisateurs**).
+- **Projet A — AP 3.1 « M2L Site Dynamique »** : projet à 3 développeurs sur 5 semaines, refonte d'un site institutionnel en application web dynamique PHP MVC.
+- **Projet B — AP 3.2 « Aux Claviers Citoyens »** : projet en lien avec l'**armée**, consommation d'une **API REST sécurisée OAuth2** pour gérer des tournois — il complète A sur la sous-compétence **« Collecter, suivre et orienter des demandes »** que A ne valide pas, et il prouve ma capacité à intégrer un système tiers normé.
 
 > *(Optionnel : montrer rapidement la matrice de compétences du portfolio à l'écran.)*
 
@@ -72,18 +72,20 @@ Je vais maintenant dérouler **les six blocs de compétences** à travers ce pro
 
 - **Mettre en place son environnement d'apprentissage** et **veille** : MVC en PHP objet et Git en branches étaient nouveaux pour moi. **Pourquoi ?** Parce que ces technologies évoluent vite et que sans veille active, on travaille avec des pratiques obsolètes et on se retrouve dépassé en entreprise.
 
-Voilà pour le projet A. **Cinq blocs sur six couverts**, avec une vraie densité de sous-compétences. Il manque encore deux sous-compétences dans le bloc 2 et le bloc 5 que je veux justifier — c'est là qu'intervient le second projet.
+Voilà pour le projet A. **Cinq blocs sur six couverts**, avec une vraie densité de sous-compétences. Il manque une sous-compétence du bloc 2 — *Collecter, suivre et orienter des demandes* — que je veux justifier : c'est là qu'intervient le second projet.
 
-### 2.2 — Projet B : AP 2.2 — Application de gestion des Journées Portes Ouvertes (≈ 1 min 30)
+### 2.2 — Projet B : AP 3.2 — « Aux Claviers Citoyens » : application de gestion de tournois pour l'armée (≈ 1 min 30)
 
-Le contexte : développer une application **C# / Access** pour la **secrétaire coordinatrice des JPO**. Elle reçoit des demandes d'inscription par téléphone, mail et courrier, les saisit, les suit et les oriente. Ce projet vient compléter le projet A sur deux sous-compétences spécifiques :
+Le contexte est très différent du projet M2L et c'est ce qui m'a intéressé : il s'agit d'une **application qui consomme une API REST sécurisée par OAuth2 (Bearer token)**, pour gérer un cycle de tournois — équipes, matchs, scores — pour le compte de **l'armée**. Le contrat d'API était fourni : 5 modules (auth, utilisateurs, tournois, équipes, matchs), des endpoints précis, des formats JSON imposés.
 
-- **Collecter, suivre et orienter des demandes** : l'application modélise littéralement le travail de la secrétaire. **Pourquoi cette compétence est validée ici et pas dans M2L ?** Parce que dans M2L, on construisait un service multi-utilisateur générique ; ici, on automatise un flux de demandes externes éparpillées sur papier et tableur. C'est exactement le sens de la compétence.
-- **Accompagner les utilisateurs dans la mise en place d'un service** : maquettes IHM validées en première séance avec la cible. **Pourquoi ?** Parce que l'utilisatrice finale n'est pas développeuse : sans validation préalable, on aurait livré un outil inutilisable. Une appli inutilisable par son utilisateur final est une appli inutile.
+Ce projet apporte deux choses que M2L ne couvrait pas et qui sont fondamentales pour mon profil :
 
-Et toutes les autres sous-compétences du référentiel — recensement des ressources, respect du modèle relationnel imposé, validation des saisies, planification WeKan, recette documentée, déploiement GitLab, apprentissage du C# objet — sont également validées dans ce projet, ce qui me permet de **redoubler la validation** sur ce qu'on a vu dans M2L et de prouver que ce ne sont pas des compétences ponctuelles.
+- **Collecter, suivre et orienter des demandes** (bloc 2) : les besoins fonctionnels n'étaient pas tous figés au départ. **Échanger avec l'armée pour cadrer les zones grises** était indispensable. **Pourquoi cette sous-compétence est-elle validée ici et pas dans M2L ?** Parce que dans M2L on développait pour un cahier des charges complet et stable ; ici, j'ai dû **collecter activement des informations auprès du client final**, les suivre, les orienter vers les bonnes parties de l'application. C'est exactement le sens de la compétence.
+- **Exploiter un référentiel imposé** dans une dimension nouvelle : un **contrat d'API tiers**. **Pourquoi ?** Parce que respecter strictement un contrat d'API (endpoints, format JSON, OAuth2 Bearer) n'est pas un choix mais la condition technique pour que l'application communique avec un système qu'on ne contrôle pas. Le moindre écart casse l'intégration. C'est un cas typique en entreprise : on s'intègre à des systèmes existants, on ne les redéfinit pas.
 
-> **Synthèse compétences :** entre AP 3.1 et AP 2.2, **les six blocs et la majorité des sous-compétences du référentiel sont validés**, sur deux projets de natures différentes — un web/PHP en équipe de trois, et un client lourd C#/Access en binôme.
+Et toutes les autres sous-compétences du référentiel — traitement de la demande applicative (CRUD complet tournois/équipes/matchs), planification Trello, tests d'intégration sur chaque endpoint, montée en compétence sur OAuth2 et la consommation d'API REST, veille technique sur la documentation d'API — sont également validées dans ce projet, ce qui me permet de **redoubler la validation** sur ce qu'on a vu dans M2L et de prouver que ces compétences ne sont pas ponctuelles, mais transférables d'un contexte à l'autre.
+
+> **Synthèse compétences :** entre AP 3.1 et AP 3.2, **les six blocs et la majorité des sous-compétences du référentiel sont validés**, sur deux projets de natures très différentes — une application web complète en équipe de trois pour un acteur sportif associatif, et l'intégration d'une API REST sécurisée pour un client institutionnel exigeant.
 
 ---
 
@@ -131,7 +133,7 @@ Je poursuis maintenant mon parcours en **[bachelor / licence pro / école / alte
 
 ### Annexes — Aide-mémoire pour le jury (à ne PAS lire)
 
-- **Projets cités** : AP 3.1 M2L Site Dynamique (PHP MVC, équipe de 3), AP 2.2 JPO (C# / Access, binôme).
-- **Autres projets disponibles si question** : AP 2.1 Générateur SQL (C#), AP 2.3 M2L Statique (HTML/CSS), AP 2.4 Championnat (C#/MySQL), AP 3.2 Aux Claviers Citoyens (consommation API REST OAuth2), GEX (projet personnel finance/Python).
+- **Projets cités** : AP 3.1 M2L Site Dynamique (PHP MVC, équipe de 3), AP 3.2 Aux Claviers Citoyens (consommation API REST OAuth2, client armée).
+- **Autres projets disponibles si question** : AP 2.1 Générateur SQL (C#), AP 2.2 JPO (C#/Access), AP 2.3 M2L Statique (HTML/CSS), AP 2.4 Championnat (C#/MySQL), GEX (projet personnel finance/Python).
 - **Stages** : LBP Tests Angular/Cypress (mai-juin 2025), LBP Mainframe COBOL/JCL/DB2 (janv-mars 2026).
 - **Portfolio technique** : PHP MVC maison, SQLite, admin sécurisé (CSRF + sessions), publié sur GitHub.
