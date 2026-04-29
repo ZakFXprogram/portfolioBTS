@@ -524,3 +524,80 @@ window.openLightbox = openLightbox;
 window.closeLightbox = closeLightbox;
 window.lightboxPrev = lightboxPrev;
 window.lightboxNext = lightboxNext;
+
+/* ============================================
+   Popup justification de sous-compétence
+   ============================================ */
+(function () {
+    document.addEventListener('DOMContentLoaded', function () {
+        var popup = document.getElementById('competencePopup');
+        if (!popup) return;
+
+        var titleEl    = document.getElementById('competencePopupTitle');
+        var blockEl    = document.getElementById('competencePopupBlock');
+        var commentEl  = document.getElementById('competencePopupComment');
+        var pourquoiEl = document.getElementById('competencePopupPourquoi');
+        var lastFocus  = null;
+
+        function openPopup(btn) {
+            lastFocus      = btn;
+            titleEl.textContent    = btn.getAttribute('data-sc-name') || '';
+            blockEl.textContent    = btn.getAttribute('data-block-name') || '';
+            commentEl.textContent  = btn.getAttribute('data-comment') || '—';
+            pourquoiEl.textContent = btn.getAttribute('data-pourquoi') || '—';
+            popup.hidden = false;
+            document.body.style.overflow = 'hidden';
+            var closeBtn = popup.querySelector('.competence-popup-close');
+            if (closeBtn) closeBtn.focus();
+        }
+
+        function closePopup() {
+            popup.hidden = true;
+            document.body.style.overflow = '';
+            if (lastFocus && typeof lastFocus.focus === 'function') {
+                lastFocus.focus();
+            }
+        }
+
+        document.querySelectorAll('.competence-check').forEach(function (btn) {
+            btn.addEventListener('click', function () { openPopup(btn); });
+        });
+
+        popup.querySelectorAll('[data-close-popup]').forEach(function (el) {
+            el.addEventListener('click', closePopup);
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && !popup.hidden) {
+                closePopup();
+            }
+        });
+    });
+})();
+
+/* Carousel projet (flèches) */
+(function () {
+    document.addEventListener('DOMContentLoaded', function () {
+        var carousel = document.querySelector('.project-carousel');
+        if (!carousel) return;
+        var imgs = carousel.querySelectorAll('.project-carousel-img');
+        if (imgs.length < 2) return;
+        var prev = carousel.querySelector('.project-carousel-prev');
+        var next = carousel.querySelector('.project-carousel-next');
+        var counter = carousel.querySelector('.project-carousel-current');
+        var current = 0;
+
+        function show(i) {
+            imgs[current].classList.remove('is-active');
+            current = (i + imgs.length) % imgs.length;
+            imgs[current].classList.add('is-active');
+            if (counter) counter.textContent = (current + 1);
+        }
+        if (prev) prev.addEventListener('click', function () { show(current - 1); });
+        if (next) next.addEventListener('click', function () { show(current + 1); });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowLeft') show(current - 1);
+            else if (e.key === 'ArrowRight') show(current + 1);
+        });
+    });
+})();

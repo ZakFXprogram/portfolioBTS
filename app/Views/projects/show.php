@@ -28,10 +28,43 @@
             </div>
         </div>
         
+        <?php
+            $galleryImages = [];
+            if (!empty($project['gallery_images'])) {
+                $galleryImages = array_values(array_filter(array_map('trim', explode(',', $project['gallery_images']))));
+            }
+            // Image principale en premier, en évitant les doublons
+            $mainImage = trim((string)($project['image'] ?? ''));
+            $allImages = $mainImage !== '' ? [$mainImage] : [];
+            foreach ($galleryImages as $g) {
+                if ($g !== '' && !in_array($g, $allImages, true)) {
+                    $allImages[] = $g;
+                }
+            }
+        ?>
         <div class="project-detail-image">
-            <img src="<?= ASSETS_PATH ?>/images/projects/<?= htmlspecialchars($project['image']) ?>" 
-                 alt="<?= htmlspecialchars($project['title']) ?>"
-                 onerror="this.src='https://via.placeholder.com/1200x600/1a1a2e/eee?text=<?= urlencode($project['title']) ?>'">
+            <?php if (!empty($allImages)): ?>
+            <div class="project-carousel" data-current="0">
+                <?php foreach ($allImages as $i => $img): ?>
+                <img class="project-carousel-img<?= $i === 0 ? ' is-active' : '' ?>"
+                     src="<?= ASSETS_PATH ?>/images/projects/<?= htmlspecialchars($img) ?>"
+                     alt="<?= htmlspecialchars($project['title']) ?>"
+                     <?= $i === 0 ? '' : 'loading="lazy"' ?>
+                     onerror="this.src='https://via.placeholder.com/1200x600/1a1a2e/eee?text=<?= urlencode($project['title']) ?>'">
+                <?php endforeach; ?>
+                <?php if (count($allImages) > 1): ?>
+                <button type="button" class="project-carousel-arrow project-carousel-prev" aria-label="Image précédente">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button type="button" class="project-carousel-arrow project-carousel-next" aria-label="Image suivante">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <div class="project-carousel-counter">
+                    <span class="project-carousel-current">1</span> / <?= count($allImages) ?>
+                </div>
+                <?php endif; ?>
+            </div>
+            <?php endif; ?>
         </div>
         
         <div class="project-detail-content">
@@ -53,31 +86,96 @@
             <?php if (!empty($project['competence_blocks'])): ?>
             <div class="project-detail-sub-competences">
                 <h3>Compétences mobilisées</h3>
-                <?php 
-                // Grouper les sous-compétences par block_id
-                $groupedSc = [];
-                foreach ($project['sub_competences'] as $sc) {
-                    $groupedSc[$sc['block_id']][] = $sc;
+                <p class="competences-table-help">
+                    <i class="fas fa-info-circle"></i>
+                    Cliquez sur un <i class="fas fa-check-circle" style="color:#22c55e;"></i> pour voir le <strong>Comment</strong> et le <strong>Pourquoi</strong> de la sous-compétence validée.
+                </p>
+                <?php
+                // Indexer toutes les sous-compétences par bloc
+                $subsByBlock = [];
+                foreach ($project['all_sub_competences'] as $sc) {
+                    $subsByBlock[$sc['competence_block_id']][] = $sc;
                 }
-                // Afficher par bloc avec justification par sous-compétence
-                foreach ($project['competence_blocks'] as $block): 
-                    $blockScs = $groupedSc[$block['id']] ?? [];
-                    if (empty($blockScs)) continue;
+                $validatedMap = $project['validated_sub_competences'];
+
+                // Calculer le nombre maximum de sous-compétences pour les colonnes
+                $maxSubs = 0;
+                foreach ($project['competence_blocks'] as $block) {
+                    $count = count($subsByBlock[$block['id']] ?? []);
+                    if ($count > $maxSubs) { $maxSubs = $count; }
+                }
                 ?>
-                <div class="sc-group">
-                    <h4 class="sc-group-title"><?= htmlspecialchars($block['name']) ?></h4>
-                    <ul class="sc-items-list">
-                        <?php foreach ($blockScs as $sc): ?>
-                        <li class="sc-item-entry">
-                            <span class="sc-item-name"><?= htmlspecialchars($sc['sc_name']) ?></span>
-                            <?php if (!empty($sc['sc_justification'])): ?>
-                            <p class="sc-item-justification"><?= nl2br(htmlspecialchars($sc['sc_justification'])) ?></p>
-                            <?php endif; ?>
-                        </li>
+                <?php if ($maxSubs > 0): ?>
+                <div class="competences-matrix-wrapper">
+                    <table class="competences-matrix">
+                        <thead>
+                            <tr>
+                                <th class="competences-matrix-corner">Compétences mises en œuvre</th>
+                                <th class="competences-matrix-sc-head">Sous-compétences validées dans ce projet</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($project['competence_blocks'] as $block):
+                            $blockSubs = $subsByBlock[$block['id']] ?? [];
+                            if (empty($blockSubs)) continue;
+                            $color = htmlspecialchars($block['color'] ?? '#f97316');
+                        ?>
+                            <tr>
+                                <th class="competences-matrix-block" style="border-left-color: <?= $color ?>;">
+                                    <span class="competences-matrix-block-name"><?= htmlspecialchars($block['name']) ?></span>
+                                </th>
+                                <td class="competences-matrix-cell">
+                                    <ul class="competences-sc-list">
+                                    <?php foreach ($blockSubs as $sc):
+                                        $scId = (int)$sc['id'];
+                                        $isValidated = isset($validatedMap[$scId]);
+                                        $just = $validatedMap[$scId] ?? null;
+                                    ?>
+                                        <li class="competences-sc-item <?= $isValidated ? 'is-validated' : 'not-validated' ?>">
+                                            <?php if ($isValidated): ?>
+                                                <button type="button"
+                                                        class="competence-check"
+                                                        aria-label="Voir la justification de <?= htmlspecialchars($sc['name'], ENT_QUOTES) ?>"
+                                                        data-sc-name="<?= htmlspecialchars($sc['name'], ENT_QUOTES) ?>"
+                                                        data-block-name="<?= htmlspecialchars($block['name'], ENT_QUOTES) ?>"
+                                                        data-comment="<?= htmlspecialchars($just['comment'] ?? '', ENT_QUOTES) ?>"
+                                                        data-pourquoi="<?= htmlspecialchars($just['pourquoi'] ?? '', ENT_QUOTES) ?>">
+                                                    <i class="fas fa-check-circle"></i>
+                                                </button>
+                                            <?php else: ?>
+                                                <span class="competence-uncheck" aria-label="Non validée">
+                                                    <i class="fas fa-minus-circle"></i>
+                                                </span>
+                                            <?php endif; ?>
+                                            <span class="competences-sc-name"><?= htmlspecialchars($sc['name']) ?></span>
+                                        </li>
+                                    <?php endforeach; ?>
+                                    </ul>
+                                </td>
+                            </tr>
                         <?php endforeach; ?>
-                    </ul>
+                        </tbody>
+                    </table>
                 </div>
-                <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+
+            <!-- Popup de justification -->
+            <div id="competencePopup" class="competence-popup" role="dialog" aria-modal="true" aria-labelledby="competencePopupTitle" hidden>
+                <div class="competence-popup-backdrop" data-close-popup></div>
+                <div class="competence-popup-content" role="document">
+                    <button type="button" class="competence-popup-close" aria-label="Fermer" data-close-popup>&times;</button>
+                    <p class="competence-popup-block" id="competencePopupBlock"></p>
+                    <h4 class="competence-popup-title" id="competencePopupTitle"></h4>
+                    <div class="competence-popup-section">
+                        <h5><i class="fas fa-cogs"></i> Comment</h5>
+                        <p id="competencePopupComment"></p>
+                    </div>
+                    <div class="competence-popup-section">
+                        <h5><i class="fas fa-lightbulb"></i> Pourquoi</h5>
+                        <p id="competencePopupPourquoi"></p>
+                    </div>
+                </div>
             </div>
             <?php endif; ?>
         </div>

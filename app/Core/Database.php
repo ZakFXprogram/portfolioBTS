@@ -52,6 +52,21 @@ class Database
         } catch (PDOException $e) {
             // La colonne existe déjà, ignorer l'erreur
         }
+
+        // Ajouter la colonne justification (Comment) à project_sub_competences
+        try {
+            $this->pdo->exec("ALTER TABLE project_sub_competences ADD COLUMN justification TEXT DEFAULT ''");
+        } catch (PDOException $e) {}
+
+        // Ajouter la colonne justification_pourquoi (Pourquoi) à project_sub_competences
+        try {
+            $this->pdo->exec("ALTER TABLE project_sub_competences ADD COLUMN justification_pourquoi TEXT DEFAULT ''");
+        } catch (PDOException $e) {}
+
+        // Ajouter la colonne justification_pourquoi à experience_sub_competences
+        try {
+            $this->pdo->exec("ALTER TABLE experience_sub_competences ADD COLUMN justification_pourquoi TEXT DEFAULT ''");
+        } catch (PDOException $e) {}
     }
 
     public function query($sql, $params = [])

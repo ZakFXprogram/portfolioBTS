@@ -197,15 +197,31 @@ $db = Database::getInstance();
 $message = '';
 $messageType = '';
 
-// Migration auto : ajouter colonne justification à project_sub_competences si absente
+// Migration auto : ajouter colonnes justification (comment) et justification_pourquoi à project_sub_competences
 try {
     $cols = $db->fetchAll("PRAGMA table_info(project_sub_competences)");
-    $hasJust = false;
+    $hasJust = false; $hasPourquoi = false;
     foreach ($cols as $c) {
-        if ($c['name'] === 'justification') { $hasJust = true; break; }
+        if ($c['name'] === 'justification') { $hasJust = true; }
+        if ($c['name'] === 'justification_pourquoi') { $hasPourquoi = true; }
     }
     if (!$hasJust) {
         $db->query("ALTER TABLE project_sub_competences ADD COLUMN justification TEXT DEFAULT ''");
+    }
+    if (!$hasPourquoi) {
+        $db->query("ALTER TABLE project_sub_competences ADD COLUMN justification_pourquoi TEXT DEFAULT ''");
+    }
+} catch (Exception $e) {}
+
+// Migration auto : ajouter colonne justification_pourquoi à experience_sub_competences
+try {
+    $cols = $db->fetchAll("PRAGMA table_info(experience_sub_competences)");
+    $hasPourquoi = false;
+    foreach ($cols as $c) {
+        if ($c['name'] === 'justification_pourquoi') { $hasPourquoi = true; break; }
+    }
+    if (!$hasPourquoi) {
+        $db->query("ALTER TABLE experience_sub_competences ADD COLUMN justification_pourquoi TEXT DEFAULT ''");
     }
 } catch (Exception $e) {}
 
@@ -690,20 +706,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $project_id = (int)($_POST['project_id'] ?? 0);
         $block_ids = $_POST['competence_block_ids'] ?? [];
         $sub_competence_ids = $_POST['sub_competence_ids'] ?? [];
-        $sc_justifications = $_POST['sc_justifications'] ?? [];
+        $sc_just_comment = $_POST['sc_just_comment'] ?? [];
+        $sc_just_pourquoi = $_POST['sc_just_pourquoi'] ?? [];
 
-        // Vérifier que chaque sous-compétence cochée a une justification
+        // Vérifier que chaque sous-compétence cochée a Comment ET Pourquoi
         $valid = true;
         foreach ($sub_competence_ids as $sc_id) {
-            $just = trim($sc_justifications[(int)$sc_id] ?? '');
-            if ($just === '') {
+            $jc = trim($sc_just_comment[(int)$sc_id] ?? '');
+            $jp = trim($sc_just_pourquoi[(int)$sc_id] ?? '');
+            if ($jc === '' || $jp === '') {
                 $valid = false;
                 break;
             }
         }
 
         if (!$valid) {
-            $message = "Chaque sous-compétence cochée doit avoir une justification !";
+            $message = "Chaque sous-compétence cochée doit avoir un Comment et un Pourquoi !";
             $messageType = 'error';
         } else {
             // Sauvegarder les blocs (sans justification par bloc)
@@ -713,12 +731,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $db->query("INSERT INTO project_competence_blocks (project_id, competence_block_id, justification) VALUES (?, ?, ?)", [$project_id, $bid, '']);
             }
 
-            // Sauvegarder les sous-compétences cochées avec justification
+            // Sauvegarder les sous-compétences cochées avec Comment + Pourquoi
             $db->query("DELETE FROM project_sub_competences WHERE project_id = ?", [$project_id]);
             foreach ($sub_competence_ids as $sc_id) {
                 $sid = (int)$sc_id;
-                $just = trim($sc_justifications[$sid] ?? '');
-                $db->query("INSERT INTO project_sub_competences (project_id, sub_competence_id, justification) VALUES (?, ?, ?)", [$project_id, $sid, $just]);
+                $jc = trim($sc_just_comment[$sid] ?? '');
+                $jp = trim($sc_just_pourquoi[$sid] ?? '');
+                $db->query("INSERT INTO project_sub_competences (project_id, sub_competence_id, justification, justification_pourquoi) VALUES (?, ?, ?, ?)", [$project_id, $sid, $jc, $jp]);
             }
 
             $message = "Compétences du projet mises à jour !";
@@ -731,16 +750,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $experience_id = (int)($_POST['experience_id'] ?? 0);
         $block_ids = $_POST['competence_block_ids'] ?? [];
         $sub_competence_ids = $_POST['sub_competence_ids'] ?? [];
-        $sc_justifications = $_POST['sc_justifications'] ?? [];
+        $sc_just_comment = $_POST['sc_just_comment'] ?? [];
+        $sc_just_pourquoi = $_POST['sc_just_pourquoi'] ?? [];
 
         $valid = true;
         foreach ($sub_competence_ids as $sc_id) {
-            $just = trim($sc_justifications[(int)$sc_id] ?? '');
-            if ($just === '') { $valid = false; break; }
+            $jc = trim($sc_just_comment[(int)$sc_id] ?? '');
+            $jp = trim($sc_just_pourquoi[(int)$sc_id] ?? '');
+            if ($jc === '' || $jp === '') { $valid = false; break; }
         }
 
         if (!$valid) {
-            $message = "Chaque sous-compétence cochée doit avoir une justification !";
+            $message = "Chaque sous-compétence cochée doit avoir un Comment et un Pourquoi !";
             $messageType = 'error';
         } else {
             $db->query("DELETE FROM experience_competence_blocks WHERE experience_id = ?", [$experience_id]);
@@ -751,8 +772,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $db->query("DELETE FROM experience_sub_competences WHERE experience_id = ?", [$experience_id]);
             foreach ($sub_competence_ids as $sc_id) {
                 $sid = (int)$sc_id;
-                $just = trim($sc_justifications[$sid] ?? '');
-                $db->query("INSERT INTO experience_sub_competences (experience_id, sub_competence_id, justification) VALUES (?, ?, ?)", [$experience_id, $sid, $just]);
+                $jc = trim($sc_just_comment[$sid] ?? '');
+                $jp = trim($sc_just_pourquoi[$sid] ?? '');
+                $db->query("INSERT INTO experience_sub_competences (experience_id, sub_competence_id, justification, justification_pourquoi) VALUES (?, ?, ?, ?)", [$experience_id, $sid, $jc, $jp]);
             }
 
             $message = "Compétences de l'expérience mises à jour !";
@@ -2086,7 +2108,10 @@ $subCompetences = $db->fetchAll("SELECT sc.*, cb.name as block_name FROM sub_com
                                 <label for="pc_sc_<?= $sc['id'] ?>" style="color:#ccc;font-size:0.9rem;"><?= htmlspecialchars($sc['name']) ?></label>
                             </div>
                             <div class="pc-sc-justification" id="pc_sc_just_wrap_<?= $sc['id'] ?>" style="display:none;margin-left:25px;margin-top:6px;">
-                                <textarea name="sc_justifications[<?= $sc['id'] ?>]" rows="2" id="pc_sc_just_<?= $sc['id'] ?>" placeholder="Justification de cette sous-compétence (obligatoire)..." style="font-size:0.85rem;width:100%;"></textarea>
+                                <label style="color:#fb923c;font-size:0.8rem;display:block;margin-top:4px;">Comment (preuves) *</label>
+                                <textarea name="sc_just_comment[<?= $sc['id'] ?>]" rows="2" id="pc_sc_just_comment_<?= $sc['id'] ?>" placeholder="Comment j'ai fait : actions, outils, étapes, preuves..." style="font-size:0.85rem;width:100%;"></textarea>
+                                <label style="color:#fb923c;font-size:0.8rem;display:block;margin-top:4px;">Pourquoi (réflexion) *</label>
+                                <textarea name="sc_just_pourquoi[<?= $sc['id'] ?>]" rows="2" id="pc_sc_just_pourquoi_<?= $sc['id'] ?>" placeholder="Pourquoi ce choix : besoin, contraintes, objectif..." style="font-size:0.85rem;width:100%;"></textarea>
                             </div>
                         </div>
                         <?php endforeach; ?>
@@ -2139,7 +2164,10 @@ $subCompetences = $db->fetchAll("SELECT sc.*, cb.name as block_name FROM sub_com
                                 <label for="ec_sc_<?= $sc['id'] ?>" style="color:#ccc;font-size:0.9rem;"><?= htmlspecialchars($sc['name']) ?></label>
                             </div>
                             <div id="ec_sc_just_wrap_<?= $sc['id'] ?>" style="display:none;margin-left:25px;margin-top:6px;">
-                                <textarea name="sc_justifications[<?= $sc['id'] ?>]" rows="2" id="ec_sc_just_<?= $sc['id'] ?>" placeholder="Justification de cette sous-compétence (obligatoire)..." style="font-size:0.85rem;width:100%;"></textarea>
+                                <label style="color:#fb923c;font-size:0.8rem;display:block;margin-top:4px;">Comment (preuves) *</label>
+                                <textarea name="sc_just_comment[<?= $sc['id'] ?>]" rows="2" id="ec_sc_just_comment_<?= $sc['id'] ?>" placeholder="Comment j'ai fait : actions, outils, étapes, preuves..." style="font-size:0.85rem;width:100%;"></textarea>
+                                <label style="color:#fb923c;font-size:0.8rem;display:block;margin-top:4px;">Pourquoi (réflexion) *</label>
+                                <textarea name="sc_just_pourquoi[<?= $sc['id'] ?>]" rows="2" id="ec_sc_just_pourquoi_<?= $sc['id'] ?>" placeholder="Pourquoi ce choix : besoin, contraintes, objectif..." style="font-size:0.85rem;width:100%;"></textarea>
                             </div>
                         </div>
                         <?php endforeach; ?>
@@ -2163,14 +2191,17 @@ $subCompetences = $db->fetchAll("SELECT sc.*, cb.name as block_name FROM sub_com
             foreach ($projects as $p) {
                 $pid = $p['id'];
                 $blocks = $db->fetchAll("SELECT competence_block_id, justification FROM project_competence_blocks WHERE project_id = ?", [$pid]);
-                $subs = $db->fetchAll("SELECT sub_competence_id, justification FROM project_sub_competences WHERE project_id = ?", [$pid]);
+                $subs = $db->fetchAll("SELECT sub_competence_id, justification, justification_pourquoi FROM project_sub_competences WHERE project_id = ?", [$pid]);
                 $blockData = [];
                 foreach ($blocks as $b) {
                     $blockData[$b['competence_block_id']] = $b['justification'] ?? '';
                 }
                 $subsData = [];
                 foreach ($subs as $s) {
-                    $subsData[$s['sub_competence_id']] = $s['justification'] ?? '';
+                    $subsData[$s['sub_competence_id']] = [
+                        'comment' => $s['justification'] ?? '',
+                        'pourquoi' => $s['justification_pourquoi'] ?? ''
+                    ];
                 }
                 $pcData[$pid] = [
                     'blocks' => $blockData,
@@ -2186,11 +2217,16 @@ $subCompetences = $db->fetchAll("SELECT sc.*, cb.name as block_name FROM sub_com
             foreach ($experiences as $e) {
                 $eid = $e['id'];
                 $blocks = $db->fetchAll("SELECT competence_block_id FROM experience_competence_blocks WHERE experience_id = ?", [$eid]);
-                $subs = $db->fetchAll("SELECT sub_competence_id, justification FROM experience_sub_competences WHERE experience_id = ?", [$eid]);
+                $subs = $db->fetchAll("SELECT sub_competence_id, justification, justification_pourquoi FROM experience_sub_competences WHERE experience_id = ?", [$eid]);
                 $blockIds = [];
                 foreach ($blocks as $b) { $blockIds[] = $b['competence_block_id']; }
                 $subsData = [];
-                foreach ($subs as $s) { $subsData[$s['sub_competence_id']] = $s['justification'] ?? ''; }
+                foreach ($subs as $s) {
+                    $subsData[$s['sub_competence_id']] = [
+                        'comment' => $s['justification'] ?? '',
+                        'pourquoi' => $s['justification_pourquoi'] ?? ''
+                    ];
+                }
                 $ecData[$eid] = ['blocks' => $blockIds, 'subs' => $subsData];
             }
             echo json_encode($ecData);
@@ -2382,8 +2418,10 @@ $subCompetences = $db->fetchAll("SELECT sc.*, cb.name as block_name FROM sub_com
             if (wrap) {
                 wrap.style.display = cb.checked ? 'block' : 'none';
                 if (!cb.checked) {
-                    var textarea = document.getElementById('pc_sc_just_' + scId);
-                    if (textarea) textarea.value = '';
+                    var ta1 = document.getElementById('pc_sc_just_comment_' + scId);
+                    var ta2 = document.getElementById('pc_sc_just_pourquoi_' + scId);
+                    if (ta1) ta1.value = '';
+                    if (ta2) ta2.value = '';
                 }
             }
         }
@@ -2392,13 +2430,15 @@ $subCompetences = $db->fetchAll("SELECT sc.*, cb.name as block_name FROM sub_com
             var valid = true;
             document.querySelectorAll('.pc-sc-checkbox:checked').forEach(function(cb) {
                 var scId = cb.value;
-                var textarea = document.getElementById('pc_sc_just_' + scId);
-                if (textarea && textarea.value.trim() === '') {
-                    valid = false;
-                    textarea.style.borderColor = '#ef4444';
-                } else if (textarea) {
-                    textarea.style.borderColor = '#3a3a5a';
-                }
+                ['pc_sc_just_comment_', 'pc_sc_just_pourquoi_'].forEach(function(prefix) {
+                    var t = document.getElementById(prefix + scId);
+                    if (t && t.value.trim() === '') {
+                        valid = false;
+                        t.style.borderColor = '#ef4444';
+                    } else if (t) {
+                        t.style.borderColor = '#3a3a5a';
+                    }
+                });
             });
             var errorDiv = document.getElementById('pc_validation_error');
             errorDiv.style.display = valid ? 'none' : 'block';
@@ -2428,11 +2468,13 @@ $subCompetences = $db->fetchAll("SELECT sc.*, cb.name as block_name FROM sub_com
                 cb.checked = isChecked;
                 var wrap = document.getElementById('pc_sc_just_wrap_' + scId);
                 if (wrap) wrap.style.display = isChecked ? 'block' : 'none';
-                var textarea = document.getElementById('pc_sc_just_' + scId);
-                if (textarea) {
-                    textarea.value = isChecked ? (data.subs[scId] || '') : '';
-                    textarea.style.borderColor = '#3a3a5a';
-                }
+                var sub = isChecked ? data.subs[scId] : null;
+                var commentVal = sub ? (typeof sub === 'object' ? (sub.comment || '') : sub) : '';
+                var pourquoiVal = sub && typeof sub === 'object' ? (sub.pourquoi || '') : '';
+                var taC = document.getElementById('pc_sc_just_comment_' + scId);
+                var taP = document.getElementById('pc_sc_just_pourquoi_' + scId);
+                if (taC) { taC.value = commentVal; taC.style.borderColor = '#3a3a5a'; }
+                if (taP) { taP.value = pourquoiVal; taP.style.borderColor = '#3a3a5a'; }
             });
             
             document.getElementById('projectCompetencesModal').classList.add('active');
@@ -2461,8 +2503,10 @@ $subCompetences = $db->fetchAll("SELECT sc.*, cb.name as block_name FROM sub_com
             if (wrap) {
                 wrap.style.display = cb.checked ? 'block' : 'none';
                 if (!cb.checked) {
-                    var textarea = document.getElementById('ec_sc_just_' + scId);
-                    if (textarea) textarea.value = '';
+                    var ta1 = document.getElementById('ec_sc_just_comment_' + scId);
+                    var ta2 = document.getElementById('ec_sc_just_pourquoi_' + scId);
+                    if (ta1) ta1.value = '';
+                    if (ta2) ta2.value = '';
                 }
             }
         }
@@ -2471,13 +2515,15 @@ $subCompetences = $db->fetchAll("SELECT sc.*, cb.name as block_name FROM sub_com
             var valid = true;
             document.querySelectorAll('.ec-sc-checkbox:checked').forEach(function(cb) {
                 var scId = cb.value;
-                var textarea = document.getElementById('ec_sc_just_' + scId);
-                if (textarea && textarea.value.trim() === '') {
-                    valid = false;
-                    textarea.style.borderColor = '#ef4444';
-                } else if (textarea) {
-                    textarea.style.borderColor = '#3a3a5a';
-                }
+                ['ec_sc_just_comment_', 'ec_sc_just_pourquoi_'].forEach(function(prefix) {
+                    var t = document.getElementById(prefix + scId);
+                    if (t && t.value.trim() === '') {
+                        valid = false;
+                        t.style.borderColor = '#ef4444';
+                    } else if (t) {
+                        t.style.borderColor = '#3a3a5a';
+                    }
+                });
             });
             var errorDiv = document.getElementById('ec_validation_error');
             errorDiv.style.display = valid ? 'none' : 'block';
@@ -2505,11 +2551,13 @@ $subCompetences = $db->fetchAll("SELECT sc.*, cb.name as block_name FROM sub_com
                 cb.checked = isChecked;
                 var wrap = document.getElementById('ec_sc_just_wrap_' + scId);
                 if (wrap) wrap.style.display = isChecked ? 'block' : 'none';
-                var textarea = document.getElementById('ec_sc_just_' + scId);
-                if (textarea) {
-                    textarea.value = isChecked ? (data.subs[scId] || '') : '';
-                    textarea.style.borderColor = '#3a3a5a';
-                }
+                var sub = isChecked ? data.subs[scId] : null;
+                var commentVal = sub ? (typeof sub === 'object' ? (sub.comment || '') : sub) : '';
+                var pourquoiVal = sub && typeof sub === 'object' ? (sub.pourquoi || '') : '';
+                var taC = document.getElementById('ec_sc_just_comment_' + scId);
+                var taP = document.getElementById('ec_sc_just_pourquoi_' + scId);
+                if (taC) { taC.value = commentVal; taC.style.borderColor = '#3a3a5a'; }
+                if (taP) { taP.value = pourquoiVal; taP.style.borderColor = '#3a3a5a'; }
             });
             
             document.getElementById('expCompetencesModal').classList.add('active');
